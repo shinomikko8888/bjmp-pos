@@ -1,4 +1,4 @@
-import { Audit, Dashboard, ForgotPass, Inventory, Load, Login, Pdl, Pos, Register, ResetPass, User } from "../pages";
+import { Audit, Dashboard, ForgotPass, Inventory, Load, Login, Pdl, Pos, ResetPass, User } from "../pages";
 
 const routes = [
     //Authentication Pages
@@ -9,10 +9,6 @@ const routes = [
     {
         path: '/login',
         component: <Login />,
-    },
-    {
-        path: '/register',
-        component: <Register />,
     },
     {
         path: '/forgot-pass',

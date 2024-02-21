@@ -1,0 +1,179 @@
+/* General Authentication */
+
+.auth-container{
+    position: relative;
+    max-width:none;
+    max-height: max-content;
+    width: 100%;
+    padding: 85px;
+    margin: 0 15px;
+    background-color: #fff;
+    font-family: 'Tahoma';
+}
+
+.auth-container header{
+    position: relative;
+}
+.auth-container .form-layout{
+    position: relative;
+    margin-top: 16px;
+    min-height: 500px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.auth-header-text{
+    font-family: Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+}
+.auth-sub-text{
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-style: italic;
+}
+
+.form-layout label{
+    text-align: left;
+}
+
+.form-layout .input-details{
+    width: 320px;
+    
+}
+.form-layout .input-details{ /*login page na input*/
+    width: 320px;
+}
+.form-layout .form.second {
+    width: 800px;
+}
+.auth-container img{
+    width: 200px;
+    height: 200px;
+}
+.auth-container .form-layout input{
+    background-color: #EDF0F2;
+    border: 1px solid #8f8f8f;
+    padding: 13px 10px 13px 10px;
+}
+.auth-container .form-layout .form{
+    position: absolute;
+    background-color: #fff;
+    transition: 0.3s ease;
+}
+.auth-container .form-layout .form.second{
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(100%);
+}
+.form-layout.secActive .form.second{
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+.form-layout.secActive .form.first{
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-100%);
+}
+.auth-container .form-layout .title{
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 6px 0;
+    color: #333;
+}
+.auth-container .form-layout .fields{
+
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: stretch;
+}
+.auth-container .form-layout .fields input{
+
+    padding: 10px;
+}
+.auth-container .form-layout button, .back-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #fff;
+    border-radius: 5px;
+    margin: 25px 0;
+    background-color: #505050;
+    transition: all 0.3s linear;
+    cursor: pointer;
+}
+.auth-container .form-layout .text-btn{
+    font-size: 14px;
+    font-weight: 400;
+}
+.form-layout button:hover{
+    background-color: #333333;
+}
+.form-layout button i,
+.form-layout .backBtn i{
+    margin: 0 6px;
+}
+.form-layout .back-btn i{
+    transform: rotate(180deg);
+}
+.form-layout .buttons{
+    display: flex;
+    align-items: center;
+}
+.form-layout .buttons button , .back-btn{
+    margin-right: 14px;
+}
+.form-required{
+    color: red;
+}
+
+
+.link-register{
+    cursor: pointer;
+    color: black;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.progress-bar-container {
+    display: flex;
+    justify-content: center;
+    
+  }
+  
+  /* Style for the progress bar */
+  .progress-bar {
+    width: 20%; /* Adjust the width as needed */
+    height: 10px; /* Adjust the height as needed */
+    background-color: #ededed; /* Background color of the progress bar */
+    border-radius: 30px;
+  }
+  
+  /* Style for the progress bar fill */
+  .progress-bar-fill {
+    height: 100%;
+    background-color: #5D6679; /* Fill color of the progress bar */
+    border-radius: 30px;
+    transition: 0.3s ease;
+    transform: translateX(0);
+  }
+
+  .hollow-btn {
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border-color: #D0D3D9;
+    height: 38px;
+    width: 100px;
+    color: #5D6679;
+    position: relative;
+    cursor: pointer;
+    text-decoration: none;
+  }
