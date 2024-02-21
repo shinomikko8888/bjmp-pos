@@ -2,7 +2,6 @@
 export default function removeNavBar(location, routes) {
     const restrictedPaths = [
         "/login",
-        "/register",
         "/forgot-pass",
         "/reset-pass",
         "/"];

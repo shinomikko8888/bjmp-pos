@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+.sidebar-closed{
+  margin-left: 78px;
+  margin-top: 60px;
+  transition: all .5s ease;
+}
+
+.sidebar-open{
+  margin-left: 250px;
+  margin-top: 60px;
+  transition: all .5s ease;
+}

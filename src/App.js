@@ -2,11 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { routes } from "./config";
 import { hideNavBar, hideSideBar } from "./utils";
+import { SideNavigationBar, TopNavigationBar } from "./components";
+import './App.css'
+import Modal from "./components/modals";
+
+
 
 function App() {
   const location = useLocation();
   const isPageHasNavBar = hideNavBar(location, routes);
-  // const isPageHasSideBar = hideSideBar(location, routes);
+  const isPageHasSideBar = hideSideBar(location, routes);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   const isMobileDevice = () => {
     const userAgent = navigator.userAgent;
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
@@ -25,17 +35,29 @@ function App() {
   useEffect(() => {
     // Call the function to disable mobile view when the component mounts
     disableMobileView();
-    document.title = "BJMP |"
+    if(!isPageHasSideBar){
+      setIsSidebarOpen(false);
+    }
   }, []);
+
 
   return (
     <div>
-      {/*isPageHasNavBar && <Navbar />*/}
+      {isPageHasSideBar && <SideNavigationBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
+      {isPageHasNavBar && <TopNavigationBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>}
+
+
+      <div className={isPageHasSideBar && isSidebarOpen ? 'sidebar-open' : 
+      isPageHasSideBar && !isSidebarOpen ? 'sidebar-closed' : ''}>
+
       <Routes>
-        {routes.map(route => (
-          <Route key={route.path} path={route.path} element={route.component} />
-        ))}
+
+          {routes.map(route => (
+            <Route key={route.path} path={route.path} element={route.component} />
+          ))}
+        
       </Routes>
+      </div>
     </div>
   );
 }

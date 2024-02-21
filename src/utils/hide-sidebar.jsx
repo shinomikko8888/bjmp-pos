@@ -2,7 +2,6 @@
 export default function removeSideBar(location, routes) {
     const restrictedPaths = [
         "/login",
-        "/register",
         "/forgot-pass",
         "/reset-pass",
         "/"];

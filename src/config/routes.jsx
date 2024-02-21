@@ -24,27 +24,27 @@ const routes = [
         component: <Dashboard />,
     },
     {
-        path: '/dashboard/pdls',
+        path: '/pdls',
         component: <Pdl />,
     },
     {
-        path: '/dashboard/inventory',
+        path: '/inventory',
         component: <Inventory />,
     },
     {
-        path: '/dashboard/pos',
+        path: '/pos',
         component: <Pos />,
     },
     {
-        path: '/dashboard/load',
+        path: '/load',
         component: <Load />,
     },
     {
-        path: '/dashboard/audit',
+        path: '/audit',
         component: <Audit />,
     },
     {
-        path: '/dashboard/users',
+        path: '/users',
         component: <User />,
     },
 ]

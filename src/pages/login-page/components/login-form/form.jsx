@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import { Axios } from '../../../../config'
 import { domain } from "../../../../constants";
-
+import '../../../../styles/buttons/general.css'
 export default function LoginFormLayout(){
     const [imageSrc, setImageSrc] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
@@ -61,13 +61,9 @@ export default function LoginFormLayout(){
           <hr />
           <div className='row'>
             <div className='col-12'>
-              <Link className='hollow-btn' to={"/forgot-pass"}>
-                <button type="button" className="mt-2"
-                  style={{
-                    background: '#ffffff',
-                    border: '2px solid #D0D3D9',
-                    color: '#5D6679',
-                  }}>
+              <Link to={"/forgot-pass"} style={{textDecoration: 'none'}}>
+                <button type="button" className="hollow-btn"
+>
                   Forgot Password
                 </button>
               </Link>

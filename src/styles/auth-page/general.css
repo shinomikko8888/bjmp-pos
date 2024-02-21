@@ -27,7 +27,7 @@
     font-weight: bold;
 }
 .auth-sub-text{
-    font-family: 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Lucida Sans';
     font-style: italic;
 }
 
@@ -168,12 +168,17 @@
     border-radius: 8px;
     justify-content: center;
     align-items: center;
-    background: #ffffff;
-    border-color: #D0D3D9;
+    background: #ffffff !important;
     height: 38px;
     width: 100px;
-    color: #5D6679;
+    color: #5D6679 !important;
     position: relative;
     cursor: pointer;
-    text-decoration: none;
+    text-decoration: none !important;
+    border: 1px solid white !important;
+  }
+
+  .hollow-btn:hover{
+    border: 1px solid #eeeeee !important;
+    text-decoration: underline !important;
   }

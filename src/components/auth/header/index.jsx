@@ -1,6 +1,6 @@
 
-import '../../../../styles/auth-page/general.css';
-import BJMPLogo from '../../../../assets/png/bjmp-logo.png'
+import '../../../styles/auth-page/general.css'
+import BJMPLogo from '../../../assets/png/bjmp-logo.png'
 export default function AuthHeaderDisplay(){
     return(
             <header className='text-center'>

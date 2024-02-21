@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
-import {Helmet} from "react-helmet-async";
-import { LoginForm, LoginFunctionality } from './components';
+import { Helmet } from "react-helmet-async";
+import { LoginForm } from './components';
 export default function Login() {
   
   return (
