@@ -1,6 +1,6 @@
-import ModalBody from "./modal-body";
-import ModalFooter from "./modal-footer";
-import ModalHeader from "./modal-header";
+import ModalBody from "./modal-template/modal-body";
+import ModalFooter from "./modal-template/modal-footer";
+import ModalHeader from "./modal-template/modal-header";
 import '../../styles/modals/general.css';
 import { useState } from "react";
 

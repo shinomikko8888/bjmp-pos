@@ -1,4 +1,4 @@
-import '../../../styles/modals/general.css'
+import '../../../../styles/modals/general.css'
 
 export default function ModalHeader({content}){
     return(

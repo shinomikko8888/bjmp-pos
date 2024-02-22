@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from '../../../../modals';
+import { Modal } from '../../../../../components'
 import './../../../../../styles/buttons/general.css'
 import BJMPLogo from '../../../../../assets/png/bjmp-logo.png'
 export default function UserProfileModal({stateChecker, stateControl}){

@@ -1,4 +1,8 @@
 /* General Authentication */
+body{
+    font-family: 'Tahoma';
+}
+
 
 .auth-container{
     position: relative;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Modal from '../../../../modals';
 import './../../../../../styles/buttons/general.css'
+import { Modal } from '../../../../../components'
 
 export default function LogoutModal({stateChecker, stateControl}) {
   const history = useNavigate(); // Get the history object

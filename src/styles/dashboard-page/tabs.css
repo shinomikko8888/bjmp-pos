@@ -1,0 +1,24 @@
+/* Tabs */
+
+.tab {
+    padding: 10px 20px;
+    background-color: none;
+    text-decoration: none;
+    color: #333;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border: none;
+    background-color: #bbb;
+    font-size: 14px;
+    box-shadow: 9px 0px 3px rgba(0, 0, 0, 0.1);
+    margin-right: 5px;
+    margin-top: 20px;
+    left: 14%;
+    z-index: 55;
+  }
+  
+  /* Style the active tab */
+  .tab-active {
+    background-color: #fff; 
+    color: #4F4F4F;
+  }

@@ -1,0 +1,137 @@
+/* cards */
+.second-card {
+    min-height: max-content;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.25);
+  }
+  
+  
+  .fourth-card, .fifth-card {
+    min-height: max-content;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.25);
+    padding: 20px 10px;
+  }
+  
+  .pdl-card {
+    min-height: max-content;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.25);
+    padding: 20px 10px;
+  }
+  
+  .sixth-card {
+    min-height: fit-content;
+    max-height: 510px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.25);
+    padding: 27px;
+  }
+
+.first-card p {
+    font-size: 14px;
+  }
+  
+  .second-card p {
+    font-size: 14px;
+  }
+  .second-card th{
+    font-size: 16px;
+  }
+  
+  .third-card p {
+    font-size: 14px;
+  }
+  
+  .third-card th{
+    font-size: 16px;
+  }
+  
+  .fourth-card p {
+    font-size: 12px;
+  }
+  .fifth-card p {
+    font-size: 12px;
+  }
+  
+  .sixth-card p {
+    font-size: 14px;
+  }
+  
+  .blue-card {
+    background-color: #10069f;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.05);
+    color: white;
+    /* Set a fixed height and define the overflow behavior */
+    height: 200px; /* Adjust this value based on your design */
+    overflow: hidden; /* Hide content that exceeds the fixed height */
+  }
+  
+  
+  .yellow-card {
+    background-color: #ffdf00;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.05);
+  
+    /* Set a fixed height and define the overflow behavior */
+    height: 200px; /* Adjust this value based on your design */
+    overflow: hidden; /* Hide content that exceeds the fixed height */
+  }
+  
+  .red-card {
+    background-color: #e4002b;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.05);
+    color: white;
+    /* Set a fixed height and define the overflow behavior */
+    height: 200px; /* Adjust this value based on your design */
+    overflow: hidden; /* Hide content that exceeds the fixed height */
+  }
+  
+  .green-card {
+    background-color: #449600;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.05);
+    color: white;
+    /* Set a fixed height and define the overflow behavior */
+    height: 200px; /* Adjust this value based on your design */
+    overflow: hidden; /* Hide content that exceeds the fixed height */
+  }
+  
+  .blue-card,
+  .yellow-card,
+  .red-card,
+  .green-card,
+  .second-card,
+  .fourth-card,
+  .fifth-card,
+  .sixth-card,
+  .pdl-card,
+  .profile-card {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .blue-card:hover,
+  .yellow-card:hover,
+  .red-card:hover,
+  .green-card:hover,
+  .second-card:hover,
+  .fourth-card:hover,
+  .fifth-card:hover,
+  .sixth-card:hover,
+  .pdl-card:hover,
+  .profile-card:hover {
+    transform: scale(1.03); /* Adjust the scale factor based on your design preference */
+  }
+  .profile-card label{
+    font-size: 12px;
+  }

@@ -6,6 +6,7 @@ import Load from './load-page';
 import Login from './login-page';
 import Pdl from './pdl-page';
 import Pos from './pos-page';
+import Profile from './profile-page';
 import ResetPass from './reset-password-page';
 import User from './users-page';
 
@@ -18,6 +19,7 @@ export{
     Login,
     Pdl,
     Pos,
+    Profile,
     ResetPass,
     User
 }
