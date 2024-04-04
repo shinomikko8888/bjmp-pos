@@ -1,0 +1,20 @@
+.table-container-modal {
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.25);
+    position: relative;
+}
+  .clean-table-modal {
+    width: 60%;
+    border-top: 2px solid #ddd;
+    border-bottom: 2px solid #ddd;
+    height: auto;
+    border-collapse: collapse;
+    color: #48505E;
+    font-size: 12px;
+}
+
+  .clean-table-modal th {
+      padding: 8px;
+      text-align: left;
+  }

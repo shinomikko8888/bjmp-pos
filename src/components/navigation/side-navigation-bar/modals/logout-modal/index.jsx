@@ -2,15 +2,27 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './../../../../../styles/buttons/general.css'
 import { Modal } from '../../../../../components'
+import { handleSubmitWrapper } from '../../../../../utils';
 
 export default function LogoutModal({stateChecker, stateControl}) {
   const history = useNavigate(); // Get the history object
+  const userData = {
+    "user-email": localStorage.getItem('user-email'),
+    "user-login-token": localStorage.getItem('login-token'),
+    "action": 'logout-user'
+  }
 
-  const handleLogout = () => {
-    localStorage.clear();
-    // Redirect to the login page or wherever you want after logout
-    history('/');
-  };
+  const handleSubmit = async (event) => {
+    try{
+      const response = await handleSubmitWrapper(event, userData);
+      if(response.success){
+        localStorage.clear();
+        history('/');
+      }
+    } catch (error) {
+      console.error('Error: ', error);
+    }
+  }
 
   const logoutHeader = (
     <div className='w-100 text-center'>
@@ -38,7 +50,7 @@ export default function LogoutModal({stateChecker, stateControl}) {
       <button
         type="button"
         className='main-btn'
-        onClick={handleLogout}
+        onClick={handleSubmit}
       >
         Logout
       </button>

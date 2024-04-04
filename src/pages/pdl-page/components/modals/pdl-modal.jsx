@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from "react";
 import { Modal } from "../../../../components";
 import '../../../../styles/buttons/general.css'
-
+import { BRANCHES } from "../../../../constants";
 export default function PDLModal({stateChecker, stateControl, isEdit}){
     const [imageSrc, setImageSrc] = useState(null);
     const fileInputRef = useRef(null);
@@ -17,7 +17,7 @@ export default function PDLModal({stateChecker, stateControl, isEdit}){
         <div className='row w-100'>
             <div className='col-12 d-flex align-items-center'>
             <i className={`${ isEdit ? 'fa-solid fa-pen' : 'fa-solid fa-plus'}`}></i>
-            <h6 className='fw-bold fs-6 m-0 pe-4 ps-2 text-start'>{`${isEdit ? 'Edit' : 'Create'}`} PDL Modal</h6>
+            <h6 className='fw-bold fs-6 m-0 pe-4 ps-2 text-start'>{`${isEdit ? 'Edit' : 'Create'}`} PDL Entry</h6>
             </div>
         </div>
     );
@@ -45,8 +45,8 @@ export default function PDLModal({stateChecker, stateControl, isEdit}){
                         </svg>
                 <input
                     type="file"
-                    name='pdl-image'
-                    id='pdl-image'
+                    name='pdlImage'
+                    id='pdlImage'
                     ref={fileInputRef}
                     style={{ display: 'none' }}
                     accept="image/*"
@@ -62,18 +62,18 @@ export default function PDLModal({stateChecker, stateControl, isEdit}){
             </div>
             <div className="row g-3 align-items-center">
                 <div className="col-6">
-                <label htmlFor="pdl_firstname" className="col-form-label">First Name:</label>
-                <input type="text" id="pdl_firstname" name="pdl_firstname" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter first name" onChange={'handleChange'} />
+                <label htmlFor="pdlFirstName" className="col-form-label">First Name:</label>
+                <input type="text" id="pdlFirstName" name="pdlFirstName" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter first name" onChange={'handleChange'} />
                 </div>
                 <div className="col-6">
-                <label htmlFor="pdl_lastname" className="col-form-label">Last Name:</label>
-                <input type="text" id="pdl_lastname" name="pdl_lastname" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter last name" onChange={'handleChange'} />
+                <label htmlFor="pdlLastName" className="col-form-label">Last Name:</label>
+                <input type="text" id="pdlLastName" name="pdlLastName" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter last name" onChange={'handleChange'} />
                 </div>
             </div>
             <div className="row g-3 align-items-center">
                 <div className="col-6">
-                <label htmlFor="pdl_middlename" className="col-form-label">Middle Name:</label>
-                <input type="text" id="pdl_middlename" name="pdl_middlename" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter middle name" onChange={'handleChange'} />
+                <label htmlFor="pdlMiddleName" className="col-form-label">Middle Name:</label>
+                <input type="text" id="pdlMiddleName" name="pdlMiddleName" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter middle name" onChange={'handleChange'} />
                 </div>
                 <div className="col-6">
                 <label htmlFor="pdlNo" className="col-form-label">PDL No:</label>
@@ -82,8 +82,8 @@ export default function PDLModal({stateChecker, stateControl, isEdit}){
             </div>
             <div className="row g-3 align-items-center">
                 <div className="col-4">
-                <label htmlFor="age" className="col-form-label">Age:</label>
-                <input type="number" id="age" name="age" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter age" onChange={'handleChange'} />
+                <label htmlFor="pdlAge" className="col-form-label">Age:</label>
+                <input type="number" id="pdlAge" name="pdlAge" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter age" onChange={'handleChange'} />
                 </div>
                 <div className="col-8" style={{ display: 'flex', flexDirection: 'column' }}>
                 <label className="col-form-label">Gender:</label>
@@ -94,7 +94,7 @@ export default function PDLModal({stateChecker, stateControl, isEdit}){
                     <input
                                 value="Male"
                                 type="radio"
-                                name="gender"
+                                name="pdlGender"
                                 id="genderMale"
                                 style={{ boxShadow: 'none', width: '12px', height: '18px' }} // Adjust the size as needed
                                 onChange={'handleChange'}
@@ -109,7 +109,7 @@ export default function PDLModal({stateChecker, stateControl, isEdit}){
                     <input
                                 value="Female"
                                 type="radio"
-                                name="gender"
+                                name="pdlGender"
                                 id="genderFemale"
                                 style={{ boxShadow: 'none', width: '12px', height: '18px' }} // Adjust the size as needed
                                 onChange={'handleChange'}
@@ -124,7 +124,7 @@ export default function PDLModal({stateChecker, stateControl, isEdit}){
                 <input
                             value="Other"
                             type="radio"
-                            name="gender"
+                            name="pdlGender"
                             id="genderOther"
                             style={{ boxShadow: 'none', width: '12px', height: '18px' }} // Adjust the size as needed
                             onChange={'handleChange'}
@@ -139,7 +139,7 @@ export default function PDLModal({stateChecker, stateControl, isEdit}){
                         <div className="form-check" style={{ display: 'flex' }}>
                             <input
                             type="text"
-                            name="other_gender"
+                            name="pdlOtherGender"
                             className="form-control"
                             style={{ boxShadow: 'none'}}
                             placeholder="Enter other gender"
@@ -156,14 +156,34 @@ export default function PDLModal({stateChecker, stateControl, isEdit}){
             </div>
             <div className="row g-3 align-items-center">
                     <div className="col-6">
-                        <label htmlFor="cell_no" className="col-form-label">Cell No.:</label>
-                        <input type="text" id="cell_no" name="cell_no" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter cell no." onChange={'handleChange'} />
+                        <label htmlFor="pdlCellNo" className="col-form-label">Cell No.:</label>
+                        <input type="text" id="pdlCellNo" name="pdlCellNo" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter cell no." onChange={'handleChange'} />
                     </div>
                     <div className="col-6">
-                        <label htmlFor="medical_condition" className="col-form-label">Medical Condition (Leave blank if none):</label>
-                        <input type="text" id="medical_condition" name="medical_condition" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter condition." onChange={'handleChange'} />
+                        <label htmlFor="pdlMedical" className="col-form-label">Medical Condition (Leave blank if none):</label>
+                        <input type="text" id="pdlMedical" name="pdlMedical" className="form-control" style={{ boxShadow: 'none' }} placeholder="Enter condition." onChange={'handleChange'} />
                     </div>
                 </div>
+            <div className="row g-3 align-items-center">
+                    <div className="col-12">
+                        <label htmlFor="pdlBranch" className="col-form-label">PDL Branch Location</label>
+                        <select
+                            name="pdlBranch"
+                            id="pdlBranch"
+                            className="form-select"
+                            style={{ width: '100%', boxShadow: 'none' }}
+                        >
+                            <option value="" disabled hidden>--Select Branch--</option> {/* Default option */}
+                            {BRANCHES.map(branch => (
+                                <optgroup key={branch.label} label={branch.label}>
+                                    {branch.facilities.map((facility, subIndex) => (
+                                        <option key={subIndex} value={facility}>{facility}</option>
+                                    ))}
+                                </optgroup>
+                            ))}
+                        </select>
+                    </div>
+            </div>
         </>
     )
 

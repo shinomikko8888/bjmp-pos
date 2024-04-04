@@ -112,11 +112,12 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     padding: 8px;
-  
+    top: 0;
+    transform: translateY(100px);
   }
   
   .filter-option {
-    padding: 8px;
+    padding: 3px;
     font-size: 14px;
     color: #333;
     transition: background-color 0.3s ease;
@@ -126,3 +127,62 @@
   .filter-option:hover {
     background-color: #f0f0f0;
   }
+
+  .filter-icon{
+    color: #333;
+    transition: all 0.2s ease-in-out;
+  }
+  .filter-icon:hover{
+    color: #555;
+    transform: scale(1.05);
+  }
+
+  .table-display-empty{
+    text-align: center;
+  }
+  .table-display-empty-padding{
+    padding: 15rem 20rem;
+  }
+  .table-display-empty-modal{
+    text-align: center;
+  }
+  .table-display-empty-padding-modal{
+    padding: 5rem 8rem;
+  }
+  .table-display-empty-hover{
+    transition: all 0.5s ease-in-out;
+  }
+
+  .table-display-empty-hover:hover{
+    transform: scale(1.02);
+  }
+
+  .pagination-link {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    transition: all 0.3s ease-in-out;
+    margin: 0;
+    font-size: 14px;
+  }
+  .pagination-link:hover {
+    background-color: rgb(230, 230, 230);
+  }
+  .pagination-link-active{
+    background-color: #48505E;
+    color: white;
+    border: 1px solid #ccc;
+    margin: 0;
+    padding: 4px 8px;
+    transition: all 0.3s ease-in-out;
+    
+  }
+  .pagination-link-active:hover{
+    background-color: #363d47;
+    color: white;
+  }
+  .pagination-info{
+    font-size: 12px;
+  }
+
+  

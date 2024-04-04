@@ -35,34 +35,52 @@
     padding: 8px;
   }
   
-  .type-cell.Overstocked {
+  /*.type-cell.Overstocked {
     background-color: #00ffdd;
     color: white;
     padding: 8px;
-  }
+  }*/
   .type-cell.Healthy {
     background-color: #00ff15;
     color: white;
     padding: 8px;
+
   }
-  .type-cell.NearCritical {
+  .type-cell.Critical {
     background-color: #fffb00;
     color: black;
     padding: 8px;
   }
-  .type-cell.AtCritical {
+  /*.type-cell.AtCritical {
     background-color: #ff7b00;
     color: white;
     padding: 8px;
-  }
-  .type-cell.BelowCritical {
+  }*/
+  .type-cell.Severe {
     background-color: #ff0000;
     color: white;
     padding: 8px;
   }
-  .type-cell.NoStock{
+  .type-cell.Unavailable{
     background-color: #000000;
     color: white;
     padding: 8px;
   }
+
+  .type-cell.Administrator{
+    background-color: #272727;
+    color: white;
+    padding: 8px;
+  }
+  .type-cell.Jail{
+    background-color: #666666;
+    color: white;
+    padding: 8px;
+  }
+  .type-cell.Concessionaire {
+    background-color: #b1b1b1;
+    color: rgb(0, 0, 0);
+    padding: 8px;
+  }
+
   

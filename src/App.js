@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { routes } from "./config";
 import { hideNavBar, hideSideBar } from "./utils";
 import { SideNavigationBar, TopNavigationBar } from "./components";
 import './App.css'
 import Modal from "./components/modals";
-
+import { ProtectedRoute, isAuthenticated } from "./utils/auth";
 
 
 function App() {
@@ -51,11 +51,13 @@ function App() {
       isPageHasSideBar && !isSidebarOpen ? 'sidebar-closed' : ''}>
 
       <Routes>
-
-          {routes.map(route => (
+        {routes.map(route => (
+          route.protected ? (
+            <Route key={route.path} path={route.path} element={isAuthenticated() ? route.component : <Navigate to="/login" />} />
+          ) : (
             <Route key={route.path} path={route.path} element={route.component} />
-          ))}
-        
+          ))
+        )}
       </Routes>
       </div>
     </div>

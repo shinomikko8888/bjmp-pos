@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import '../../../../styles/navigation-bars/top-navigation-bar/general.css';
 import BJMPLogo from '../../../../assets/png/bjmp-logo.png'
+import { DOMAIN } from "../../../../constants";
 
-export default function IconsRightTopNavBar({props}){
+export default function IconsRightTopNavBar({props, userData, imageSrc}){
   const { stateChecker: isNotifModalOpen, stateControl: setNotifModalOpen } = props[0];
   const { stateChecker: isUserProfileModalOpen, stateControl: setUserProfileModalOpen } = props[1];
     return(
@@ -17,12 +18,13 @@ export default function IconsRightTopNavBar({props}){
         </div>
         <div className='col-8' style={{ display: 'flex', alignItems: 'center' }}>
           <img
-            src={BJMPLogo} // Use the imported image
+            src={`${DOMAIN}/files/images/users/${imageSrc}`} // Use the imported image
             alt="profileImage"
             className='me-4'
             onClick={() => setUserProfileModalOpen((prev) => !prev)}
             style={{ width: '35px', height: '35px', cursor: 'pointer', borderRadius: '50%', marginRight: '10px' }}
           />
+          
           {/* You can adjust the styles above to control the spacing */}
         </div>
         

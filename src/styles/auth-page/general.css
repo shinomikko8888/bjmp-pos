@@ -186,3 +186,10 @@ body{
     border: 1px solid #eeeeee !important;
     text-decoration: underline !important;
   }
+
+  .error-message{
+    color: red;
+    text-align: center;
+    font-size: 12px;
+    margin: 1rem 0
+  }

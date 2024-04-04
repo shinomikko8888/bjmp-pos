@@ -1,8 +1,11 @@
+import { BRANCHES } from "./branches";
+import { POSITIONS } from "./positions";
 
-const domain = 'http://localhost:80/bjmppos/api/';
-const secugenAPI = 'https://localhost:8443/';
-
+const DOMAIN = 'http://localhost:80/bjmppos/api/';
+const SECUGEN = 'https://localhost:8443/';
 export {
-    domain,
-    secugenAPI
+    DOMAIN,
+    SECUGEN,
+    BRANCHES,
+    POSITIONS
 }
