@@ -29,15 +29,3 @@ But I don't think you would benefit either way from helping me with this project
 I'll release another update soon when I finish. Till then, sayonara!
 
 ***
-## A little information about the site itself...
-This project is already live riiiight [here](https://bjmpro3pos.com, 'BJMP POS Site') complete with backend code. But it has a bit of bugs and defects in it since this project was worked on solo, was worked on for a Capstone project, and is currently using the old structuring for the code.
-
-This app has the following features if compiled with the backend:
-1. A prisoner recording system complete with a simple e-Wallet.
-2. A dashboard page to view all data in the system (A bit wonky on handling data)
-3. A stock and inventory management system.
-4. A point-of-sales system that currently accepts on biometrics using [Secugen API and Readers](https://secugen.com, 'SecuGen')
-5. A loading system that tops up e-Wallets.
-
-The backend code runs on PHP and uses phpMyAdmin for the database management. The third-party dependencies used for the backend are [TCPDF](https://tcpdf.org) and [PHPMailer](https://github.com/PHPMailer/PHPMailer). I'll upload the backend code sooner but it is a lot messy than the frontend code.
-
