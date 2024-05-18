@@ -5,6 +5,8 @@ import Modal from './modals';
 import Tabs from './tables/tabs'
 import TableTemplate from './tables/table';
 import FilterDropdown from './tables/filter-dropdown';
+import ChartTemplate from './data/chart';
+
 export {
     AuthHeaderDisplay,
     SideNavigationBar,
@@ -12,5 +14,6 @@ export {
     Modal,
     Tabs,
     TableTemplate,
-    FilterDropdown
+    FilterDropdown,
+    ChartTemplate
 }

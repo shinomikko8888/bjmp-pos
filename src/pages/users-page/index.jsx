@@ -6,6 +6,7 @@ import { ArchiveModal, DeleteModal, RetrieveModal, SuccessfulActionModal } from 
 import { fetchDataWrapper } from '../../utils';
 import UserModal from './components/modals/user-modal';
 import { UserProfileModal } from '../../components/navigation/top-navigation-bar/modals';
+import { ADD_DESCRIPTION, ADD_TITLE, ARCHIVE_DESCRIPTION, ARCHIVE_TITLE, DELETE_DESCRIPTION, DELETE_TITLE, EDIT_DESCRIPTION, EDIT_TITLE, RETRIEVE_DESCRIPTION, RETRIEVE_TITLE, TABLE_BIG_CONTENT } from '../../constants';
 
 export default function User() {
   const tabs = [
@@ -50,6 +51,7 @@ export default function User() {
         bjmpBranch: data['user-branch-location'],
         userType: data['user-type'],
         isArchived: data['is-archived'],
+        dateArchived: data['date-archived'],
         unselectable: data['user-email'] === localStorage.getItem('user-email') || data['user-type'] === 'Administrator' ? true : false
       }));
       
@@ -98,6 +100,12 @@ export default function User() {
           hasFilter: true,
           hasLowHigh: false,
         },
+        {
+          headerId: 'dateArchived',
+          headerName: 'Date Archived',
+          hasFilter: false,
+          hasLowHigh: true,
+        }
       ],
       buttonsInTable: [
         {
@@ -119,6 +127,11 @@ export default function User() {
             function: function(){
               setUserModalOpen((prev) => !prev);
               setEdit(false);
+              setView(false);
+              setEdit(false);
+              setArchive(false);
+              setRetrieve(false);
+              setDelete(false);
             }
           },
           forArchive: false,
@@ -295,15 +308,16 @@ export default function User() {
         forArchive: true
       },
     ],
-    noOfItemsInTable: 20,
+    noOfItemsInTable: TABLE_BIG_CONTENT,
     }
   ]
   const submissionDetails = 
     {
-      title: isEdit ? 'User Edited!' : 
-      isArchive ? 'User Archived!' : isRetrieve ? 'User Retrieved!' : isDelete ? 'User Deleted!' : 'User Added!',
-      description: isEdit ? 'User entry has been edited!' : 
-      isArchive ? 'User has been archived!' : isRetrieve ? 'User entry has been retrieved!' : isDelete ? 'User entry has been deleted!' : 'User entry has been added!'
+      title: isEdit ? `User ${EDIT_TITLE}!` : 
+      isArchive ? `User ${ARCHIVE_TITLE}!` : isRetrieve ? `User ${RETRIEVE_TITLE}!` : isDelete ?  `User ${DELETE_TITLE}!` :  `User ${ADD_TITLE}!`,
+      description: isEdit ?  `User ${EDIT_DESCRIPTION}!` : 
+      isArchive ? `User ${ARCHIVE_DESCRIPTION}!` : isRetrieve ? `User ${RETRIEVE_DESCRIPTION}!` :
+       isDelete ? `User ${DELETE_DESCRIPTION}!` : `User ${ADD_DESCRIPTION}!`
     }
   return (
     <>

@@ -5,28 +5,31 @@ export default function ColoredCard({props}){
         <>
         {props.type === 'single' ? (
             <div className={`${props.color} p-4 text-start position-relative`}>
-            {/* Move the dropdown and span to the top right */}
             <div className="position-absolute top-0 end-0 p-2">
-              <select
-                id="durationSelector"
-                className="form-select form-select-sm"
-              >
-                <option value="All Time">All Time</option>
-                <option value="Weekly">Weekly</option>
-                <option value="Monthly">Monthly</option>
-              </select>
-              {/* Move the span for the specified week to the top right */}
-  
+              {
+                !props.noSelector &&
+                (
+                <select
+                  id="durationSelector"
+                  className="form-select form-select-sm"
+                >
+                  <option value="All Time">All Time</option>
+                  <option value="Weekly">Weekly</option>
+                  <option value="Monthly">Monthly</option>
+                </select>
+                )
+
+              }
+              
             </div>
   
             <i className={props.icon}></i>
             <p className="fw-bold mt-3 h4">
-              Nothing yet...
+              {props.data}
             </p>
             <p className="m-0" style={{fontSize: '14px'}}>{props.name}</p>
             
             <div className="mt-4">
-              {/* Rest of the content */}
             </div>
           </div>
         ) : 

@@ -6,9 +6,11 @@ import { SideNavigationBar, TopNavigationBar } from "./components";
 import './App.css'
 import Modal from "./components/modals";
 import { ProtectedRoute, isAuthenticated } from "./utils/auth";
-
-
+import { Chart as ChartJS, registerables} from 'chart.js';
+import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
+import 'chartjs-adapter-date-fns';
 function App() {
+  ChartJS.register(MatrixController, MatrixElement, ...registerables);
   const location = useLocation();
   const isPageHasNavBar = hideNavBar(location, routes);
   const isPageHasSideBar = hideSideBar(location, routes);
@@ -55,7 +57,7 @@ function App() {
           route.protected ? (
             <Route key={route.path} path={route.path} element={isAuthenticated() ? route.component : <Navigate to="/login" />} />
           ) : (
-            <Route key={route.path} path={route.path} element={route.component} />
+            <Route key={route.path} path={route.path} element={!isAuthenticated() ? route.component : <Navigate to="/dashboard"/> } />
           ))
         )}
       </Routes>

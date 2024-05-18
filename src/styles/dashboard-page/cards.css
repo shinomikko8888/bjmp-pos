@@ -135,3 +135,7 @@
   .profile-card label{
     font-size: 12px;
   }
+
+  .profile-height{
+    height: max-content ;
+  }

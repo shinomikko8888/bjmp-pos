@@ -59,7 +59,10 @@ export const handleChangeWrapper = async (event, formData, setFormData) => {
 
 export const isFormDataValid = (data) => {
     for (const key in data){
-        if(data.hasOwnProperty(key) && (data[key] === '' || data[key] === null)){
+        if(data.hasOwnProperty(key) && (key === 'pdl-medical-condition' || key === 'pdl-other-gender')){
+            return true;
+        }
+        else if(data.hasOwnProperty(key) && (data[key] === '' || data[key] === null)){
             return false;
         }
     }

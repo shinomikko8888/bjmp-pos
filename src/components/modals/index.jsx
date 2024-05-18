@@ -19,7 +19,7 @@ export default function Modal({ headerContent, footerContent, bodyContent, state
         onClick={handleBackdropClick}
         style={{zIndex: customZIndex}}
       >
-        <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{width: customWidth}}>
+        <div className={`modal-content ${!stateChecker ? 'closed' : ''}`} onClick={(e) => e.stopPropagation()} style={{width: customWidth}}>
           <ModalHeader content={headerContent} />
           <ModalBody content={bodyContent} />
           <ModalFooter content={footerContent} />

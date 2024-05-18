@@ -30,6 +30,7 @@ export default function UserModal(props){
         "user-position": '',
         "user-image": '',
         "action": '',
+        "active-email": '',
     })
 
     useEffect(() => {
@@ -46,9 +47,13 @@ export default function UserModal(props){
             "user-position": '',
             "user-image": '',
             "action": '',
+            "active-email": '',
         })
         setErrorMessage('');
         setImageSrc(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''; // Clear file input value
+        }
         if(isEdit && stateChecker){
             fetchData();
         }
@@ -66,6 +71,7 @@ export default function UserModal(props){
                 "user-position": '',
                 "user-image": '',
                 "action": 'add-user',
+                "active-email": localStorage.getItem('user-email'),
                 
             })
             setImageSrc(null);
@@ -91,6 +97,7 @@ export default function UserModal(props){
                 "user-position": data['user-position'] || '',
                 "user-image": data['user-image'] || '',
                 "action": 'edit-user',
+                "active-email": localStorage.getItem('user-email'),
             })
             setTempImageSrc(userImage);
         } catch (error){
@@ -122,6 +129,7 @@ export default function UserModal(props){
                 setErrorMessage('Please fill in all required fields');
                 return;
             }
+            
             const response = await handleSubmitWrapper(event, formData, true);
             if (response.success) {
                 setErrorMessage('');

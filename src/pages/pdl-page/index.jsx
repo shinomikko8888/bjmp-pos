@@ -4,24 +4,68 @@ import { Helmet } from "react-helmet-async";
 import {TableTemplate} from '../../components';
 import { Tabs } from '../../components';
 import { PDLModal } from './components';
-import { ArchiveModal, DeleteModal, RetrieveModal } from '../../components/modals/util-modals';
+import { ArchiveModal, DeleteModal, RetrieveModal, SuccessfulActionModal } from '../../components/modals/util-modals';
+import { fetchDataWrapper } from '../../utils';
+import { ADD_DESCRIPTION, ADD_TITLE, ARCHIVE_DESCRIPTION, ARCHIVE_TITLE, DELETE_DESCRIPTION, DELETE_TITLE, EDIT_DESCRIPTION, EDIT_TITLE, RETRIEVE_DESCRIPTION, RETRIEVE_TITLE, TABLE_BIG_CONTENT } from '../../constants';
+import { useNavigate } from 'react-router-dom';
+
 export default function Pdl() {
   const tabs = [
     { label: "PDL List", id: "pdlList" },
     { label: "Archived PDLs", id: "archivedItems" },
   ];
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(tabs[0].id);
   const [onArchivedTab, setOnArchivedTab] = useState(activeTab !== 'archivedItems')
   const [isPDLModalOpen, setPDLModalOpen] = useState(false);
   const [isArchiveModalOpen, setArchiveModalOpen] = useState(false);
   const [isRetrieveModalOpen, setRetrieveModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isSuccessfulActionModalOpen, setSuccessfulActionModalOpen] = useState(false);
+  const [pdlModalSubmitted, setPdlModalSubmitted] = useState(false);
   const [isEdit, setEdit] = useState(false);
+  const [isArchive, setArchive] = useState(false);
+  const [isRetrieve, setRetrieve] = useState(false);
+  const [isDelete, setDelete] = useState(false);
   const [method, setMethod] = useState('');
-  
+  const [tableData, setTableData] = useState([]);
+  const [pdlId, setPdlId] = useState('');
+  const [primaryKey, setPrimaryKey] = useState('');
+  const [selectedRows, setSelectedRows] = useState([]);
+
   useEffect(() => {
     setOnArchivedTab(activeTab !== 'archivedItems');
+    fetchData();
   }, [activeTab]);
+
+  useEffect(() => {
+    fetchData();
+  }, [pdlModalSubmitted])
+
+  const fetchData = async () => {
+    try{
+      const rawData = await fetchDataWrapper(activeTab === "pdlList" ? 'get-pdls' : 'get-archived-pdls');
+      const transformedData = rawData.map(data => ({
+        dbpk: data['pk'],
+        pk: data['pdl-id'],
+        name: `${(data['pdl-last-name']).toUpperCase()}, ${data['pdl-first-name']} ${data['pdl-middle-name']}`,
+        balance: parseFloat(data['pdl-balance']).toFixed(2),
+        bjmpBranch: data['pdl-branch-location'],
+        type: (() => {
+          const types = [];
+          if (parseInt(data['pdl-age']) > 65) types.push('Senior');
+          if (data['pdl-gender'] === 'Other' && data['pdl-other-gender']) types.push('LGBT');
+          if (data['pdl-medical-condition']) types.push('PWD');
+          return types.length ? types : ['Regular'];
+        })(),
+        isArchived: data['is-archived'],
+      }))
+      setTableData(transformedData)
+    } catch (error){
+      console.error('Error fetching data: ', error);
+    }
+  }
+  
   const pdlTableData = [
     {
         tableIcon: 'fa-solid fa-person', //Table Icon Header
@@ -79,10 +123,13 @@ export default function Pdl() {
             buttonName: 'Add PDL',
             buttonIcon: 'fa-regular fa-plus',
             buttonFunctionality: {
-              action: 'addPDL',
+              action: 'addPDLEntry',
               function: function(){
                 setPDLModalOpen((prev) => !prev);
                 setEdit(false);
+                setArchive(false);
+                setRetrieve(false);
+                setDelete(false);
               }
             },
             forArchive: false,
@@ -96,6 +143,11 @@ export default function Pdl() {
               function: function(){
                 setArchiveModalOpen((prev) => !prev)
                 setMethod('Multiple');
+                setEdit(false);
+                setArchive(true);
+                setRetrieve(false);
+                setDelete(false);
+                setPdlId('');
               }
             },
             forArchive: false,
@@ -109,6 +161,11 @@ export default function Pdl() {
               function: function(){
                 setRetrieveModalOpen((prev) => !prev);
                 setMethod('Multiple');
+                setEdit(false);
+                setArchive(false);
+                setRetrieve(true);
+                setDelete(false);
+                setPdlId('');
               }
             },
             forArchive: true,
@@ -122,6 +179,11 @@ export default function Pdl() {
               function: function(){
                 setDeleteModalOpen((prev) => !prev);
                 setMethod('Multiple');
+                setEdit(false);
+                setArchive(false);
+                setRetrieve(false);
+                setDelete(true);
+                setPdlId('');
               }
             },
             forArchive: true,
@@ -146,120 +208,15 @@ export default function Pdl() {
             forArchive: null,
           },
         ],
-        tableData:[
-          {
-            pk: '000001',
-            name: 'DELA CRUZ, Juan Tamad',
-            balance: (8).toFixed(2),
-            bjmpBranch: 'Marilao Municipal Jail',
-            type: ['Regular'],
-            isArchived: false,
-          },
-          {
-            pk: '000002',
-            name: 'SANTOS, Pedro Arturo',
-            balance: (15).toFixed(2),
-            bjmpBranch: 'Meycauayan City Jail',
-            type: ['PWD', 'Senior'],
-            isArchived: false,
-          },
-          {
-            pk: '000003',
-            name: 'MERCADO, John Andrew Martin',
-            balance: (38).toFixed(2),
-            bjmpBranch: 'Baliwag City Jail',
-            type: ['LGBT', 'PWD'],
-            isArchived: false,
-          },
-          {
-            pk: '000004',
-            name: 'GALLARDO, Jermaine Pablo',
-            balance: (9).toFixed(2),
-            bjmpBranch: 'Baliwag City Jail',
-            type: ['PWD'],
-            isArchived: false,
-          },
-          {
-            pk: '000005',
-            name: 'REYES, Dylan Laurente',
-            balance: (13).toFixed(2),
-            bjmpBranch: 'Meycauayan City Jail',
-            type: ['Regular'],
-            isArchived: false,
-          },
-          {
-            pk: '000006',
-            name: 'RAMOS, Jiro de Guzman',
-            balance: (37).toFixed(2),
-            bjmpBranch: 'Guimba District Jail',
-            type: ['Regular'],
-            isArchived: false,
-          },
-          {
-            pk: '000007',
-            name: 'CARLOS, Miles Morales',
-            balance: (82).toFixed(2),
-            bjmpBranch: 'Camiling Municipal Jail',
-            type: ['Regular'],
-            isArchived: false,
-          },
-          {
-            pk: '000008',
-            name: 'SAN JUAN, Charlie Sotto',
-            balance: (25).toFixed(2),
-            bjmpBranch: 'Pulilan Municipal Jail',
-            type: ['Senior'],
-            isArchived: false,
-          },
-          {
-            pk: '000009',
-            name: 'FAJARDO, Ryan Janus Alarcon',
-            balance: (31).toFixed(2),
-            bjmpBranch: 'Balagtas District Jail',
-            type: ['Regular'],
-            isArchived: false,
-          },
-          {
-            pk: '000010',
-            name: 'PUNZALAN, Mark Anthony Reyes',
-            balance: (6).toFixed(2),
-            bjmpBranch: 'Marilao Municipal Jail',
-            type: ['Regular'],
-            isArchived: false,
-          },
-          {
-            pk: '000011',
-            name: 'GUILLERMO, Harley Manuel',
-            balance: (92).toFixed(2),
-            bjmpBranch: 'Meycauayan City Jail',
-            type: ['Senior'],
-            isArchived: false,
-          },
-          {
-            pk: '000012',
-            name: 'BENITEZ, Lance Carlos Domingo',
-            balance: (36.50).toFixed(2),
-            bjmpBranch: 'Tarlac City Jail Male Dorm',
-            type: ['LGBT'],
-            isArchived: false,
-          },
-          {
-            pk: '000013',
-            name: 'RAMIREZ, Jonathan Marcos',
-            balance: (37).toFixed(2),
-            bjmpBranch: 'Marilao Municipal Jail',
-            type: ['Regular'],
-            isArchived: true,
-          },
-        ],
+        tableData: tableData || null,
         tableActions: [
           {
             actionName: 'View',
             actionIcon: 'fa-solid fa-eye fa-sm',
             actionFunctionality: {
               action: 'viewPDL',
-              function: function(){
-                alert("View");
+              function: function(data, prim){
+                navigate(`/pdl-profile?id=${data}&pk=${prim}`) ;
               }
             },
             forArchive: false
@@ -269,9 +226,14 @@ export default function Pdl() {
             actionIcon: 'fa-solid fa-pen-to-square fa-sm',
             actionFunctionality: {
               action: 'editPDL',
-              function: function(){
+              function: function(data, prim){
                 setPDLModalOpen((prev) => !prev);
                 setEdit(true);
+                setArchive(false);
+                setRetrieve(false);
+                setDelete(false);
+                setPdlId(data);
+                setSelectedRows([]);
               }
             },
             forArchive: false
@@ -281,9 +243,16 @@ export default function Pdl() {
             actionIcon: 'fa-solid fa-box-archive fa-sm',
             actionFunctionality: {
               action: 'archivePDL',
-              function: function(){
+              function: function(data, prim){
                 setArchiveModalOpen((prev) => !prev);
                 setMethod('Single');
+                setEdit(false);
+                setArchive(true);
+                setRetrieve(false);
+                setDelete(false);
+                setPdlId(data);
+                setPrimaryKey(prim);
+                setSelectedRows([]);
               }
             },
             forArchive: false
@@ -293,9 +262,16 @@ export default function Pdl() {
             actionIcon: 'fa-solid fa-rotate-left fa-sm',
             actionFunctionality: {
               action: 'retrievePDL',
-              function: function(){
+              function: function(data, prim){
                 setRetrieveModalOpen((prev) => !prev);
                 setMethod('Single');
+                setEdit(false);
+                setArchive(false);
+                setRetrieve(true);
+                setDelete(false);
+                setPdlId(data);
+                setPrimaryKey(prim);
+                setSelectedRows([]);
               }
             },
             forArchive: true
@@ -305,18 +281,33 @@ export default function Pdl() {
             actionIcon: 'fa-solid fa-trash fa-sm',
             actionFunctionality: {
               action: 'deletePDL',
-              function: function(){
+              function: function(data, prim){
                 setDeleteModalOpen((prev) => !prev);
                 setMethod('Single');
+                setEdit(false);
+                setArchive(false);
+                setRetrieve(false);
+                setDelete(true);
+                setPdlId(data);
+                setPrimaryKey(prim);
+                setSelectedRows([]);
               }
             },
             forArchive: true
           },
         ],
-        noOfItemsInTable: 20,
+        noOfItemsInTable: TABLE_BIG_CONTENT,
     },
     
   ]
+  const submissionDetails = 
+    {
+      title: isEdit ? `PDL ${EDIT_TITLE}!` : 
+      isArchive ? `PDL ${ARCHIVE_TITLE}!` : isRetrieve ? `PDL ${RETRIEVE_TITLE}!` : isDelete ?  `PDL ${DELETE_TITLE}!` :  `PDL ${ADD_TITLE}!`,
+      description: isEdit ?  `PDL ${EDIT_DESCRIPTION}!` : 
+      isArchive ? `PDL ${ARCHIVE_DESCRIPTION}!` : isRetrieve ? `PDL ${RETRIEVE_DESCRIPTION}!` :
+       isDelete ? `PDL ${DELETE_DESCRIPTION}!` : `PDL ${ADD_DESCRIPTION}!`
+    }
   return (
     <>
     <div>
@@ -325,15 +316,19 @@ export default function Pdl() {
         </Helmet>
         <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab}/>
         <TableTemplate 
-          tableData={pdlTableData[0]} archived={onArchivedTab}/>
-        <PDLModal stateChecker={isPDLModalOpen} stateControl={() => setPDLModalOpen((prev) => !prev)} isEdit={isEdit}/>
+          tableData={pdlTableData[0]} archived={onArchivedTab} setRows={setSelectedRows} actionSubmitted={isSuccessfulActionModalOpen}/>
+        <PDLModal stateChecker={isPDLModalOpen} stateControl={() => setPDLModalOpen((prev) => !prev)} isEdit={isEdit}
+        isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} id={pdlId} />
+        <SuccessfulActionModal stateChecker={isSuccessfulActionModalOpen} stateControl={() => setSuccessfulActionModalOpen((prev) => !prev)}
+        isSubmitted={pdlModalSubmitted} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} actionTitle={submissionDetails.title} actionDescription={submissionDetails.description}
+        />
         <ArchiveModal 
         stateChecker={isArchiveModalOpen} stateControl={() => setArchiveModalOpen((prev) => !prev)} 
-        type={'PDL'} method={method}/>
+        type={'PDL'} method={method} id={pdlId} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} multipleIds={JSON.stringify(selectedRows)}/>
         <RetrieveModal stateChecker={isRetrieveModalOpen} stateControl={() => setRetrieveModalOpen((prev) => !prev)} 
-        type={'PDL'} method={method}/>
+        type={'PDL'} method={method} id={pdlId} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} prim={primaryKey} multipleIds={JSON.stringify(selectedRows)}/>
         <DeleteModal stateChecker={isDeleteModalOpen} stateControl={() => setDeleteModalOpen((prev) => !prev)} 
-        type={'PDL'} method={method} />
+        type={'PDL'} method={method} id={pdlId} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} prim={primaryKey} multipleIds={JSON.stringify(selectedRows)}/>
 
   </div>
     </>

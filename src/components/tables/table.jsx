@@ -46,7 +46,21 @@ export default function TableTemplate(props){
                     filteredAndSortedTableData = filteredAndSortedTableData.filter((row) =>
                         row[headerId].includes(value)
                     );
-                } else {
+                } else if (headerId === "changelogDateAndTime" || headerId === "transactionDateAndTime") {
+                  const [startDateString, endDateString] = value.split(' - ');
+
+                  // Convert date strings to Date objects
+                  const startDate = new Date(startDateString.trim());
+                  const endDate = new Date(endDateString.trim());
+
+                  // Adjust endDate to include the whole day
+                  endDate.setDate(endDate.getDate());
+
+                  filteredAndSortedTableData = filteredAndSortedTableData.filter((row) => {
+                      const rowDate = new Date(row[headerId]);
+                      return rowDate > startDate && rowDate < endDate;
+                  });
+              } else {
                     filteredAndSortedTableData = filteredAndSortedTableData.filter((row) =>
                         row[headerId].toLowerCase().includes(value.toLowerCase())
                     );
@@ -198,8 +212,12 @@ export default function TableTemplate(props){
       const generateFilterDropdowns = () => {
         const dataToRender = currentRows;
         const dataLength = dataToRender.length;
-
-        return tableData.tableHeaders.map((header, index) => (
+        
+        return tableData.tableHeaders.map((header, index) => {
+        if (header.headerId === 'dateArchived' && archived) {
+          return null;
+        }
+        return(
           <th key={index}>
             <div className="d-flex align-items-center">
             {headerNames[index]}
@@ -224,28 +242,22 @@ export default function TableTemplate(props){
                       sortConfig &&
                       sortConfig.key === header.headerId &&
                       sortConfig.direction === "ascending"
-                        ? "fa-arrow-up"
-                        : "fa-arrow-down"
+                        ? "fa-sort-down" :
+                      sortConfig &&
+                      sortConfig.key === header.headerId &&
+                      sortConfig.direction === "descending" ?
+                        "fa-sort-up"
+                        : "fa-sort"
                     }`}
                     style={{cursor: 'pointer'}}
                     onSelect={(value) => handleFilterChange(header.headerId, value)}
                   ></i>
-                  <i
-                    className={`fa-solid ${
-                      sortConfig &&
-                      sortConfig.key === header.headerId &&
-                      sortConfig.direction === "descending"
-                        ? "fa-arrow-up"
-                        : "fa-arrow-down"
-                    }`}
-                    style={{cursor: 'pointer'}}
-                    
-                  ></i>
+
                 </div >
               )}
             </div>
           </th>
-        ));
+        )});
       };
       const handleSort = (headerId) => {
         // Check if the column is already sorted and set the new direction
@@ -300,13 +312,14 @@ export default function TableTemplate(props){
             // Add IDs of buttons here if necessary
             if (
                 button.buttonFunctionality.action === 'generateReport' && (isMultipleSelectionEnabled) ||
-                button.buttonFunctionality.action === 'addPDL' && (isMultipleSelectionEnabled) ||
+                button.buttonFunctionality.action === 'addPDLEntry' && (isMultipleSelectionEnabled) ||
                 button.buttonFunctionality.action === 'addStockEntry' && (isMultipleSelectionEnabled) ||
                 button.buttonFunctionality.action === 'addUserEntry' && (isMultipleSelectionEnabled) ||
+                button.buttonFunctionality.action === 'addInstanceEntry' && (isMultipleSelectionEnabled) ||
                 button.buttonFunctionality.action === 'eraseFilter' && (!isSortedOrFiltered) ||
                 button.buttonFunctionality.action === 'archiveMultiple' && (!isMultipleSelectionEnabled || selectedRows.length === 0) ||
                 button.buttonFunctionality.action === 'retrieveMultiple' && (!isMultipleSelectionEnabled || selectedRows.length === 0) || 
-                button.buttonFunctionality.action === 'deleteMultiple' && (!isMultipleSelectionEnabled || selectedRows.length === 0)
+                button.buttonFunctionality.action === 'deleteMultiple' && (!isMultipleSelectionEnabled || selectedRows.length === 0) 
             )
              {
                 return null; 
@@ -403,7 +416,11 @@ export default function TableTemplate(props){
               </td>
             )}
             
-            {tableData.tableHeaders.map((header) => (
+            {tableData.tableHeaders.map((header) => {
+              if (header.headerId === 'dateArchived' && archived) {
+                return null;
+              }
+              return (
               <td key={header.headerId} style={{ padding: paddingStyle }}>
                 {(header.headerId === "pk" && header.headerSecondaryID === 'pdlNo' && hasData) || (header.headerId === 'transactionPdl' && hasData) && rowData[header.headerId]
                   ? `PDL-${rowData[header.headerId]}`
@@ -437,7 +454,7 @@ export default function TableTemplate(props){
                     </div>
                     : rowData[header.headerId]}
               </td>
-            ))}
+            )})}
             {hasData && tableData.tableActions && !isMultipleSelectionEnabled && (
               <td className="action-buttons" style={{ padding: paddingStyle }}>
                 {generateActions(tableData.tableActions, archived, rowData.unselectable, rowData.pk, rowPrimaryKey)}
@@ -514,7 +531,7 @@ export default function TableTemplate(props){
                             {generateButtons(tableData.buttonsInTable, archived)}
                             
                         </div>
-                        <div className='col-12 mx-auto w-100 mt-3'>
+                        <div className='col-12 mx-auto w-100 mt-3 table-overflow'>
                             <table className="clean-table selectable-table" style={{border: isMultipleSelectionEnabled ? '2px dashed #ccc' : ''}} >
                                 <thead>
                                     {
@@ -539,10 +556,11 @@ export default function TableTemplate(props){
                                 </tbody>
 
                             </table>
-                            <div className="pagination-container mt-2 d-flex align-items-center justify-content-center">
+                            
+                        </div>
+                        <div className="pagination-container mt-2 d-flex align-items-center justify-content-center">
                                 {renderPaginationButtons()}
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>

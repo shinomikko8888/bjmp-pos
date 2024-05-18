@@ -36,3 +36,17 @@
 .toggle-form-button:hover{
     background-color: #eeeeee;
 }
+
+.item-modal-field-state-button{
+    transition: all 0.4s ease-in-out;
+}
+
+.profile-button{
+    background-color: transparent;
+    border: none;
+    transition: all 0.4s ease-in-out;
+}
+
+.profile-button:hover{
+    color: #777777;
+}

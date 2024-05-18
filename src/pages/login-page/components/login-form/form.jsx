@@ -22,6 +22,7 @@ export default function LoginFormLayout(){
         if (response.success) {
           localStorage.setItem('login-token', response.user.login_token)
           localStorage.setItem('user-email', response.user.email)
+          localStorage.setItem('bjmp-branch', response.user.bjmp_branch)
           navigate('/dashboard');
         } else {
           setErrorMessage(response.message || "Login failed"); 

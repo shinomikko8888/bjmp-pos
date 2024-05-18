@@ -1,14 +1,118 @@
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Helmet } from 'react-helmet-async';
 import { TableTemplate, Tabs } from '../../components';
+import { descriptionCreator, fetchDataWrapper } from '../../utils';
+import { LogModal } from './components';
+import { TABLE_BIG_CONTENT } from '../../constants';
 
 export default function Audit() {
   const tabs = [
     { label: "Transaction History", id: "transactionHistory" },
-    { label: "Changelog", id: "Changelog" },
+    { label: "Changelog", id: "changelog" },
   ];
   const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const [tableData, setTableData] = useState([]);
+  const [isLogModalOpen, setLogModalOpen] = useState(false);
+  const [logId, setLogData] = useState('');
+
+  useEffect(() => {
+    fetchData();
+  }, [activeTab]);
+
+  const fetchData = async () => {
+    try {
+      const rawData = await fetchDataWrapper(activeTab === 'transactionHistory' ? 'get-transactions' : 'get-logs');
+      
+      if (rawData.length === 0) {
+        setTableData([]);
+        return;
+      }
+      const transformedData = rawData.map(data => {
+        const descriptionCreator = () => {
+          let description = `User ${data['log-user']} `;
+          
+          const formatFields = (fields) => {
+          return Object.entries(fields).map(([key, value]) => `${key}: ${value}`).join(', ');
+          };
+          switch(data['log-action']){
+          case 'Create':
+              description += 'has created an entry for ';
+              break;
+          case 'Edit':
+              description += 'has edited an entry for ';
+              break;
+          case 'Archive':
+              description += 'has archived an entry for ';
+              break;
+          case 'Retrieve':
+              description += 'has retrieved an entry for ';
+              break;
+          case 'Delete':
+              description += 'has deleted an entry for ';
+              break;
+          default:
+              description += 'did something with an entry for ';
+              break;
+          }
+          if (data['log-user-details'] !== null) { 
+          description += `User#${data['log-user-details']['id']} `;    
+          } else if (data['log-item-details'] !== null) {
+          description += `Item# ${data['log-item-details']['id']} `;
+          } else if (data['log-instance-details'] !== null) {
+          description += `Instance# ${data['log-instance-details']['id']} `;
+          } else if (data['log-pdl-details'] !== null) {
+          description += `PDL# ${data['log-pdl-details']['id']} `;
+          } else {
+          description += 'some random entry in the database ';
+          }
+  
+          if(data['log-reason']){
+          description += `Reason: ${data['log-reason']}`;
+          }
+          return description;
+      }
+        const transactionData = {
+          dbpk: data['pk'],
+          pk: data['transaction-id'],
+          transactionDateAndTime: data['transaction-created-at'],
+          transactionUser: data['transaction-user'],
+          transactionType: data['transaction-type'],
+          bjmpBranch: data['transaction-branch-location'],
+          transactionAmount: data['transaction-amount'],
+          transactionPdl: data['transaction-pdl'],
+        };
+  
+        const logData = {
+          dbpk: data['pk'],
+          pk: data['log-id'],
+          changelogDateAndTime: data['log-date'],
+          changelogDescription: descriptionCreator(),
+          logEmail: data['log-user'],
+          logAction: data['log-action'],
+          logItem: data['log-item-details'],
+          logPdl: data['log-pdl-details'],
+          logInstance: data['log-instance-details'],
+          logUser: data['log-user-details'],
+          logReason: data['log-reason'],
+        };
+  
+        const filterNullValues = (data) => {
+          return Object.fromEntries(
+            Object.entries(data).filter(([_, value]) => value !== null && value !== undefined)
+          );
+        };
+  
+        return activeTab === 'transactionHistory' ? filterNullValues(transactionData) : filterNullValues(logData);
+      });
+  
+      setTableData(transformedData.flat().filter(item => item !== null));
+      
+    } catch (error) {
+      console.error('Error fetching data: ', error);
+    }
+  }
+
   
   const auditLogData = [
     {
@@ -84,26 +188,7 @@ export default function Audit() {
           forArchive: null,
         },
       ],
-      tableData:[
-        {
-          pk: '000001',
-          transactionDateAndTime: '2024-02-20 15:18:00',
-          transactionUser: 'sketchynimbuss@gmail.com',
-          transactionType: 'Load',
-          bjmpBranch: 'Marilao Municipal Jail',
-          transactionAmount: (16).toFixed(2),
-          transactionPdl: '000001',
-        },
-        {
-          pk: '000002',
-          transactionDateAndTime: '2024-02-21 15:18:00',
-          transactionUser: 'sketchynimbuss@gmail.com',
-          transactionType: 'Purchase',
-          bjmpBranch: 'Meycauayan City Jail',
-          transactionAmount: (6).toFixed(2),
-          transactionPdl: '000001',
-        },
-      ],
+      tableData: tableData || null,
       tableActions: [
         {
           actionName: 'View',
@@ -117,7 +202,7 @@ export default function Audit() {
           forArchive: false
         },
       ],
-      noOfItemsInTable: 20,
+      noOfItemsInTable: TABLE_BIG_CONTENT,
     },
     {
       tableIcon: 'fa-solid fa-user-pen',
@@ -168,32 +253,22 @@ export default function Audit() {
           forArchive: null,
         },
       ],
-      tableData:[
-        {
-          pk: '000001',
-          changelogDateAndTime: '2024-02-20 15:18:00',
-          changelogDescription: 'User sketchynimbuss@gmail.com has edited an entry for PDL-000001',
-        },
-        {
-          pk: '000002',
-          changelogDateAndTime: '2024-02-21 15:18:00',
-          changelogDescription: 'User sketchynimbuss@gmail.com has retrieved entry Item#000001 from the archive',
-        },
-      ],
+      tableData: tableData || null,
       tableActions: [
         {
           actionName: 'View',
           actionIcon: 'fa-solid fa-eye fa-sm',
           actionFunctionality: {
             action: 'viewTransaction',
-            function: function(){
-              alert("View");
+            function: function(data){
+              setLogModalOpen((prev) => !prev);
+              setLogData(data);
             }
           },
           forArchive: false
         },
       ],
-      noOfItemsInTable: 20,
+      noOfItemsInTable: TABLE_BIG_CONTENT,
     }
   ]
   return (
@@ -204,6 +279,7 @@ export default function Audit() {
         </Helmet>
         <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab}/>
         <TableTemplate tableData={auditLogData[activeTab === 'transactionHistory' ? 0 : 1]} archived={true}/>
+        <LogModal stateChecker={isLogModalOpen} stateControl={() => setLogModalOpen((prev) => !prev)} id={logId} />
       </div>
     </>
   );

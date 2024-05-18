@@ -1,4 +1,5 @@
 import React from "react";
+import { VulnerableRatio } from "./components";
 export default function PDLSection(){
     
     
@@ -20,7 +21,7 @@ export default function PDLSection(){
                 Highest Spender
             </div>
             <div className='col-6'>
-                Vulnerable Ratio
+                <VulnerableRatio />
             </div>
         </div>
       </div>

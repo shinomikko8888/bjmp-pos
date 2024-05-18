@@ -1,28 +1,62 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import '../../../styles/buttons/general.css';
 import Modal from "..";
-import { handleSubmitWrapper } from "../../../utils";
+import { handleChangeWrapper, handleSubmitWrapper } from "../../../utils";
+import { REASONS } from "../../../constants/reasons";
 
 export default function RetrieveModal (props) {
     const {stateChecker, stateControl, type, method, id, isSubmittedControl, prim, multipleIds} = props
-    console.log(multipleIds)
-    const retrieveValue = {
-        id: id || '',
-        mult: multipleIds || '',
-        method: method.toLowerCase() || '',
-        action: `retrieve-${type.toLowerCase()}`,
-        prim: prim || '',
-      }
-    const handleSubmit = async (event) => {
-        try{
-          const response = await handleSubmitWrapper(event, retrieveValue, true);
-          if (response.success) {
-              stateControl((prev) => !prev)
-              isSubmittedControl((prev) => !prev)
+    const [retrieveValue, setRetrieveValue] = useState({
+        id: '',
+        mult: '',
+        method: '',
+        action: '',
+        prim: '',
+        reason: '',
+        user: '',
+      })
+    const [errorMessage, setErrorMessage] = useState('');
+    const filteredReasons = REASONS.filter(branch => branch.action === 'Retrieve')[0]?.content.filter(contentItem => contentItem.type === type)[0]?.reasons || [];
+      useEffect(() => {
+        setRetrieveValue(
+          {
+            ...retrieveValue,
+            reason: '',
           }
-        } catch (error) {
-          console.error('Error: ', error);
+        )
+      }, [stateChecker]);
+  
+      useEffect(() => {
+        setRetrieveValue({
+          ...retrieveValue,
+          id: id && id,
+          mult: multipleIds && multipleIds ,
+          method: method && method.toLowerCase(),
+          action: type && `retrieve-${type.toLowerCase()}`,
+          prim: prim && prim,
+          user: localStorage.getItem('user-email'),
+        })
+      }, [type, method, id] )
+
+      const handleChange = async (event) => {
+        await handleChangeWrapper(event, retrieveValue, setRetrieveValue);
+      };
+
+    const handleSubmit = async (event) => {
+        if(retrieveValue.reason === '' && filteredReasons.length !== 0)
+          setErrorMessage('Please set a reason for retrieval!');
+        else{
+          try{
+            const response = await handleSubmitWrapper(event, retrieveValue, true);
+            if (response.success) {
+                stateControl((prev) => !prev)
+                isSubmittedControl((prev) => !prev)
+            }
+          } catch (error) {
+            console.error('Error: ', error);
+          }
         }
+        
     }
     const retrieveHeader = (
         <div className='w-100 text-center'>
@@ -38,6 +72,21 @@ export default function RetrieveModal (props) {
                 `the entry?` :
                 `these entries?`
             } There might be ID conflicts but the system will handle it accordingly!</p>
+            { filteredReasons.length !== 0 &&
+              
+              <select
+                name="reason"
+                id="reason"
+                style={{ width: '100%', boxShadow: 'none' }}
+                onChange={handleChange}
+                value={retrieveValue.reason || ''}
+                className="form-select"
+            >
+                <option value="" disabled hidden>--Select Reason--</option>
+                {filteredReasons.map((reason, index) => (
+                    <option key={index} value={reason}>{reason}</option>
+                ))}
+            </select>}
         </div>
     )
 

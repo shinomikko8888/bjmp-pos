@@ -5,7 +5,28 @@ import { BRANCHES } from "../../constants";
 export default function FilterDropdown({ column, options, onSelect }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [showAutocomplete, setShowAutocomplete] = useState(false);
-
+    const [startDate, setStartDate] = useState({
+        date: '',
+      });
+      const [endDate, setEndDate] = useState({
+        date: '',
+      });
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    const [errorMessage, setErrorMessage] = useState("");
+    const handleSelect = () => {
+        if(!startDate.date || !endDate.date){
+          setErrorMessage('Please enter a valid range');
+        }
+        else{
+          onSelect(`${startDate.date}
+          - ${endDate.date}`);
+        }
+        
+      };
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchTerm(value);
@@ -100,6 +121,43 @@ export default function FilterDropdown({ column, options, onSelect }) {
                         )}
                     </>
                 );
+            case 'changelogDateAndTime':
+            case 'transactionDateAndTime':
+                return <div className='p-3'>
+                <label htmlFor="start-date">Start Date:</label>
+                  <div className='row d-flex'>
+                    <div className='col-12'>
+                      <input
+                        type="date"
+                        id="start-date"
+                        value={startDate.date}
+                        max={formattedDate}
+                        onChange={(e) => 
+                          setStartDate((p) => ({...p, date: e.target.value}))}
+                      />
+                    </div>
+                  
+                  </div>
+                  
+                <label htmlFor="end-date">End Date:</label>
+                <div className='row d-flex'>
+                    <div className='col-12'>
+                      <input
+                        type="date"
+                        id="start-date"
+                        value={endDate.date}
+                        max={formattedDate}
+                        onChange={(e) => 
+                          setEndDate((p) => ({...p, date: e.target.value}))}
+                      />
+                    </div>
+                  </div>
+                  <p style={{color: 'red', fontSize: '8px', margin: '0'}}>{errorMessage}</p>
+                <div className='row d-flex justify-content-end mt-2 mx-1'>
+                  <button className="link-btn" onClick={handleSelect}>Apply</button>
+                </div>
+              </div>
+                break;
             default:
                 return filteredOptions.map((option) => (
                     <div

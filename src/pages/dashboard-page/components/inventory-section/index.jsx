@@ -1,4 +1,5 @@
 import React from "react";
+import { ProfitOverview } from "./components";
 export default function InventorySection(){
     
     return(
@@ -12,7 +13,7 @@ export default function InventorySection(){
       <hr></hr>
       <div className='row'>
         <div className='col-6'>
-          Profit
+          <ProfitOverview />
         </div>
         <div className='col-3'>
           Popular Items

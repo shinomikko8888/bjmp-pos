@@ -1,7 +1,13 @@
-import React from "react";
-import { ColoredCard, SpendingChart, TransactionsChart } from "./components";
+import React, { useEffect, useState } from "react";
+import { ColoredCard } from "./components";
+import { color, getHoverColor } from 'chart.js/helpers'
+import { _adapters } from "chart.js";
+import { ChartTemplate } from "../../../../components";
+import { isoDayOfWeek } from "../../../../utils/data-management/chart-data/date-management-test";
+import { startOfToday } from "date-fns";
+import { scaleMonth, scaleYear } from "../../../../constants/chart-scales";
+import { barChartData, barChartOptions, matrixDataTest, matrixOptionsTest} from "../../../../utils/data-management/chart-data";
 export default function OverviewSection(){
-    
     const coloredCards = [
         {
             color: 'blue-card',
@@ -35,6 +41,34 @@ export default function OverviewSection(){
             type: 'single'
         },
     ]
+    const chartData = [
+      {   
+          chartCtx: 'spendTotal',
+          chartIcon: 'fa-solid fa-comments-dollar',
+          chartName: 'Spending Total',
+          chartType: 'matrix',
+          chartSelect: [
+              { label: 'Per Day', id: 0 },
+              { label: 'Per Month', id: 1 }
+          ],
+          chartData: [matrixDataTest(), matrixDataTest()],
+          chartOptions: [matrixOptionsTest(), matrixOptionsTest()],
+      },
+      {   
+        chartCtx: 'totalTransac',
+        chartIcon: 'fa-solid fa-receipt',
+        chartName: 'Total Transactions',
+        chartType: 'bar',
+        chartSelect: [
+            { label: 'Per Day', id: 0 },
+            { label: 'Per Month', id: 1 }
+        ],
+        chartData: [barChartData(), barChartData()],
+        chartOptions: [barChartOptions(), barChartOptions()],
+    },
+    ];
+    
+
     return(
     <>
         <div className='row d-flex align-items-center'>
@@ -56,12 +90,14 @@ export default function OverviewSection(){
                 </div>
             ))}
             </div>
-            <div className='row mt-2'>
+            <div className='row mt-3'>
                 <div className='col-6'>
-                    <SpendingChart />
+                    {<ChartTemplate data={chartData[0]}/>
+                    }
                 </div>
                 <div className='col-6'>
-                    <TransactionsChart />
+                    {<ChartTemplate data={chartData[1]}/>
+                    }
                 </div>
             </div>
         </div>
