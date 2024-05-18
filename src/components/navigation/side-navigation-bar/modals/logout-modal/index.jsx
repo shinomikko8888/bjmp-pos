@@ -45,7 +45,7 @@ export default function LogoutModal({stateChecker, stateControl}) {
         className='link-btn mx-2'
         onClick={() => stateControl((prev) => !prev)}
       >
-        No, Cancel
+       Cancel
       </button>
       <button
         type="button"

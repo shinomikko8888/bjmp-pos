@@ -3,9 +3,11 @@ import { LoadTopRowPage1, PDLSelector } from "./page-1";
 import { BalanceSelector, LoadTopRowPage2 } from "./page-2";
 import { TABLE_BIG_CONTENT } from "../../../constants";
 import { TableTemplate } from "../../../components";
+import LoadDetails from "./modals/load-details";
 
 export default function LoadForm(){
     const [pageNumber, setPageNumber] = useState(1);
+    const [isLoadDetailsModalOpen, setLoadDetailsModalOpen] = useState(false);
     const recentTransactionData = [
         {
             tableIcon: 'fa-solid fa-receipt',
@@ -141,12 +143,12 @@ export default function LoadForm(){
                     (pageNumber === 1 || pageNumber === 2) && (
                         <button className="main-btn" onClick={pageNumber === 1 ? 
                             (() => setPageNumber(2)) :
-                            (() => alert('Load Modal'))
+                            (() => setLoadDetailsModalOpen((prev) => !prev))
                         }>{pageNumber !== 2 ? 'Next' : 'Submit'}</button>
                     )
                 }
             </div>
-            
+            <LoadDetails stateChecker={isLoadDetailsModalOpen} stateControl={() => setLoadDetailsModalOpen((prev) => !prev)}/>
         </>
     )
 

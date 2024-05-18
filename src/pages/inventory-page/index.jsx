@@ -365,6 +365,7 @@ export default function Inventory() {
       },
     ],
     noOfItemsInTable: TABLE_BIG_CONTENT,
+    searchAvailable: true
     }
   ]
   const submissionDetails = 

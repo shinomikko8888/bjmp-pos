@@ -203,6 +203,7 @@ export default function Audit() {
         },
       ],
       noOfItemsInTable: TABLE_BIG_CONTENT,
+      searchAvailable: true
     },
     {
       tableIcon: 'fa-solid fa-user-pen',
@@ -269,6 +270,8 @@ export default function Audit() {
         },
       ],
       noOfItemsInTable: TABLE_BIG_CONTENT,
+      searchAvailable: true
+      
     }
   ]
   return (

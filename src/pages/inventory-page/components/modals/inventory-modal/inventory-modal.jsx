@@ -7,7 +7,6 @@ import { fetchDataWrapper, handleSubmitWrapper, isFormDataValid } from "../../..
 import { DOMAIN } from "../../../../../constants";
 import InventoryForm from "./components/form";
 import ProfitTab from "./components/profit-tab";
-
 export default function InventoryModal(props){
     const {stateChecker, stateControl, isEdit, isView, isSubmittedControl, id, setEdit, setView, setDelete} = props
     const [errorMessage, setErrorMessage] = useState('');
@@ -32,12 +31,12 @@ export default function InventoryModal(props){
     }, [stateChecker])
     useEffect(() => {
       if(id){
-        fetchItemData(); // Call fetchItemData only when id changes
+        fetchItemData(); 
       }
     }, [id])
     const currentDate = new Date();
     const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
     const day = String(currentDate.getDate()).padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
     const hours = String(currentDate.getHours()).padStart(2, '0');

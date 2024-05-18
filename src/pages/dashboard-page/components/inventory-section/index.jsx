@@ -1,14 +1,12 @@
 import React from "react";
 import { ProfitOverview } from "./components";
+import { SectionTitle } from "../../../../components";
 export default function InventorySection(){
     
     return(
     <>
         <div className='row d-flex align-items-center mt-5'>
-            <div className='col-11 d-flex align-items-center'>
-                <i className='fa-solid fa-warehouse'></i>
-                <h6 className="fw-bold fs-5 m-0 mx-3">Inventory Overview</h6>
-            </div>
+          <SectionTitle title="Inventory Overview" icon="fa-solid fa-warehouse"/>
         </div>
       <hr></hr>
       <div className='row'>

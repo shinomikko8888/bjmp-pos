@@ -3,7 +3,7 @@ import '../../../assets/png/bjmp-logo.png'
 import SidebarButtons from './buttons';
 import BJMPLogo from '../../../assets/png/bjmp-logo.png'
 import { useState, useEffect } from 'react';
-import { LogoutModal } from './modals';
+import { LogoutModal, SettingsModal } from './modals';
 
 export default function SideNavigationBar({isSidebarOpen, toggleSidebar}){
     const [content, setContent] = useState('');
@@ -115,8 +115,8 @@ export default function SideNavigationBar({isSidebarOpen, toggleSidebar}){
             ))}
             </div>
         </ul>
-
         </div>
+        <SettingsModal stateChecker={isSettingModalOpen} stateControl={() => setSettingModalOpen((prev) => !prev)}/>
         <LogoutModal stateChecker={isLogoutModalOpen} stateControl={() => setLogoutModalOpen((prev) => !prev)}/>
         </>
     );

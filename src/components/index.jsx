@@ -6,6 +6,9 @@ import Tabs from './tables/tabs'
 import TableTemplate from './tables/table';
 import FilterDropdown from './tables/filter-dropdown';
 import ChartTemplate from './data/chart';
+import SectionTitle from './utils/title';
+import SearchBar from './navigation/search-bar';
+import UnderConstruction from './utils/under-construction';
 
 export {
     AuthHeaderDisplay,
@@ -15,5 +18,8 @@ export {
     Tabs,
     TableTemplate,
     FilterDropdown,
-    ChartTemplate
+    ChartTemplate,
+    SectionTitle,
+    SearchBar,
+    UnderConstruction
 }

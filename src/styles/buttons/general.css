@@ -50,3 +50,16 @@
 .profile-button:hover{
     color: #777777;
 }
+
+.pay-now-button{
+    color: white;
+    background-color: #10069f;
+    border: 1px solid white;
+    padding: 10px 20px ;
+    border-radius: 20px;
+    transition: all 0.4s ease-in-out;
+}
+
+.pay-now-button:hover{
+    background-color: #2014cc;
+}

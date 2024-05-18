@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { ColoredCard } from "./components";
 import { color, getHoverColor } from 'chart.js/helpers'
 import { _adapters } from "chart.js";
-import { ChartTemplate } from "../../../../components";
+import { ChartTemplate, SectionTitle } from "../../../../components";
 import { isoDayOfWeek } from "../../../../utils/data-management/chart-data/date-management-test";
 import { startOfToday } from "date-fns";
 import { scaleMonth, scaleYear } from "../../../../constants/chart-scales";
 import { barChartData, barChartOptions, matrixDataTest, matrixOptionsTest} from "../../../../utils/data-management/chart-data";
+
 export default function OverviewSection(){
     const coloredCards = [
         {
@@ -72,10 +73,7 @@ export default function OverviewSection(){
     return(
     <>
         <div className='row d-flex align-items-center'>
-            <div className='col-11 d-flex align-items-center'>
-            <i className='fa-solid fa-chart-simple'></i>
-            <h6 className="fw-bold fs-5 m-0 mx-3">Overview</h6>
-            </div>
+            <SectionTitle title="Overview" icon="fa-solid fa-chart-simple"/>
             <div className='col-1 d-flex justify-content-center align-items-center'>
         </div>
       </div>

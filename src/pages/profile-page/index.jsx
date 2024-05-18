@@ -4,7 +4,7 @@ import { PDLGeneralProfile } from './components';
 import { ColoredCard } from '../dashboard-page/components/overview-section/components';
 import { Helmet } from 'react-helmet-async';
 import { fetchDataWrapper } from '../../utils';
-import { ChartTemplate } from '../../components';
+import { ChartTemplate, SectionTitle } from '../../components';
 import { color } from 'chart.js/helpers';
 import { isoDayOfWeek } from '../../utils/data-management/chart-data/date-management-test';
 import { _adapters } from 'chart.js';
@@ -151,10 +151,7 @@ const chartData = [
         <title>BJMP | PDL Profile</title>
       </Helmet>
       <div className='row d-flex align-items-center'>
-            <div className='col-11 d-flex align-items-center'>
-              <i className='fa-solid fa-user'></i>
-              <h6 className="fw-bold fs-5 m-0 mx-3">PDL Profile</h6>
-            </div>
+        <SectionTitle title="PDL Profile" icon="fa-solid fa-user"/>
       </div>
       <hr></hr>
       <div className='row d-flex align-items-start'>
@@ -180,10 +177,7 @@ const chartData = [
         </div>
       </div>
       <div className='row d-flex align-items-center'>
-            <div className='col-11 d-flex align-items-center'>
-              <i className='fa-solid fa-tent-arrow-left-right'></i>
-              <h6 className="fw-bold fs-5 m-0 mx-3 mt-2">'Paabot' Creditors and Transactions</h6>
-            </div>
+        <SectionTitle title="'Paabot' Creditors and Transactions" icon="fa-solid fa-tent-arrow-left-right"/>
       </div>
       <hr></hr>
       <div className='row d-flex align-items-start'>

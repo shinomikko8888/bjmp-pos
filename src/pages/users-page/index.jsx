@@ -309,6 +309,7 @@ export default function User() {
       },
     ],
     noOfItemsInTable: TABLE_BIG_CONTENT,
+    searchAvailable: true
     }
   ]
   const submissionDetails = 

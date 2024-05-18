@@ -27,3 +27,37 @@ body{
     text-align: center;
 }
 
+
+.search-bar{
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.search-button{
+    background-color: #505050;
+    color: white;
+    border: none;
+    padding: 7px 10px;
+    margin: 0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    transition: all 0.2s ease-in-out;
+}
+
+.search-button:hover{
+    background-color: #777777;
+}
+
+.under-construction-notice{
+    text-align: center;
+}
+
+.under-construction-notice h4{
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.under-construction-notice p{
+    font-weight: lighter;
+    font-size: 14px;
+}

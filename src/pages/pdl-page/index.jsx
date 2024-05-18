@@ -297,6 +297,7 @@ export default function Pdl() {
           },
         ],
         noOfItemsInTable: TABLE_BIG_CONTENT,
+        searchAvailable: true
     },
     
   ]

@@ -3,6 +3,7 @@ import '../../styles/dashboard-page/tables.css'
 import '../../styles/dashboard-page/pills.css'
 import FilterDropdown from "./filter-dropdown";
 import { empty_result } from "../../assets/svg";
+import SearchBar from "../navigation/search-bar";
 
 export default function TableTemplate(props){
     const {tableData, archived, fromModal, returnData, setRows, actionSubmitted} = props
@@ -529,6 +530,15 @@ export default function TableTemplate(props){
                             ) : null}
 
                             {generateButtons(tableData.buttonsInTable, archived)}
+                            {
+                              tableData.searchAvailable &&
+                              (
+                                <div className="d-flex">
+                                  <SearchBar/>
+                                </div>
+                              )
+                            }
+                            
                             
                         </div>
                         <div className='col-12 mx-auto w-100 mt-3 table-overflow'>

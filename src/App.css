@@ -47,3 +47,16 @@
   margin-top: 60px;
   transition: all .5s ease;
 }
+
+
+.checkout-table-open{
+  margin-right: 700px;
+  margin-top: 60px;
+  transition: all .5s ease-in-out;
+}
+
+.checkout-table-closed{
+  margin-right: 0px;
+  margin-top: 60px;
+  transition: all .5s ease-in-out;
+}
