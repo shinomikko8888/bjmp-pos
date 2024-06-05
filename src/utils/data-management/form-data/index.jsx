@@ -43,7 +43,7 @@ export const handleChange = (event, callback) => {
         if (name === 'user-contact-number' && type === 'number') {
             val = val.slice(0, 11);
         }
-
+        
         callback(prevState => ({
             ...prevState,
             [name]: val

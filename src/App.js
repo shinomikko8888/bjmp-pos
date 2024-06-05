@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { routes } from "./config";
-import { hideNavBar, hideSideBar, includeCheckoutBar } from "./utils";
+import { hideNavBar, hideSideBar /*includeCheckoutBar*/ } from "./utils";
 import { SideNavigationBar, TopNavigationBar } from "./components";
 import './App.css'
 import Modal from "./components/modals";
@@ -10,13 +10,13 @@ import { Chart as ChartJS, registerables} from 'chart.js';
 import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
 import 'chartjs-adapter-date-fns';
 import CheckoutTable from "./pages/pos-page/components/sections/checkout-menu/checkout-table";
-
+import './styles/transitions/general.css'
 function App() {
   ChartJS.register(MatrixController, MatrixElement, ...registerables);
   const location = useLocation();
   const isPageHasNavBar = hideNavBar(location, routes);
   const isPageHasSideBar = hideSideBar(location, routes);
-  const isPageHasCheckoutbar = includeCheckoutBar(location, routes);
+  //const isPageHasCheckoutbar = includeCheckoutBar(location, routes);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
   const [listExtend, setListExtend] = useState(false);
   const toggleSidebar = () => {

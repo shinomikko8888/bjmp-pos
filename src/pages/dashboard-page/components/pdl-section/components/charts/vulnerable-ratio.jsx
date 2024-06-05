@@ -9,8 +9,12 @@ export default function VulnerableRatio(props){
             chartIcon: 'fa-solid fa-person-half-dress',
             chartName: 'Vulnerable Ratio',
             chartType: 'pie',
-            chartData: [pieChartData()],
-            chartOptions: [pieChartOptions()],
+            chartSelector: [{
+                isDate: true,
+                hasBranch: true,
+                dateDoesntHaveMonth: true,
+                dateDoesntHaveYear: true,
+            }]
         },
     ]
     return (

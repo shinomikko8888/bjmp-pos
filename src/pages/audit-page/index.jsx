@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { TableTemplate, Tabs } from '../../components';
 import { descriptionCreator, fetchDataWrapper } from '../../utils';
 import { LogModal } from './components';
-import { TABLE_BIG_CONTENT } from '../../constants';
+import { DOMAIN, TABLE_BIG_CONTENT } from '../../constants';
 
 export default function Audit() {
   const tabs = [
@@ -22,92 +22,109 @@ export default function Audit() {
 
   const fetchData = async () => {
     try {
-      const rawData = await fetchDataWrapper(activeTab === 'transactionHistory' ? 'get-transactions' : 'get-logs');
+      let params = [];
+      const bjmpBranch = localStorage.getItem('bjmp-branch');
+        if (bjmpBranch !== 'BJMPRO-III Main Office') {
+            params.push(['br', bjmpBranch]);
+        }
+
+      const endpoint = activeTab === 'transactionHistory' ? 'get-transactions' : 'get-logs';
       
+      const rawData = await fetchDataWrapper(endpoint, params);
+  
       if (rawData.length === 0) {
         setTableData([]);
         return;
       }
+  
       const transformedData = rawData.map(data => {
-        const descriptionCreator = () => {
-          let description = `User ${data['log-user']} `;
-          
-          const formatFields = (fields) => {
-          return Object.entries(fields).map(([key, value]) => `${key}: ${value}`).join(', ');
+        if (activeTab === 'transactionHistory') {
+          const transactionData = {
+            dbpk: data['pk'],
+            pk: data['transaction-id'],
+            transactionDateAndTime: data['transaction-created-at'],
+            transactionUser: data['transaction-user'],
+            transactionType: data['transaction-type'],
+            bjmpBranch: data['transaction-branch-location'],
+            transactionAmount: parseFloat(data['transaction-amount']).toFixed(2),
+            transactionPdl: data['transaction-pdl'],
+            transactionReceiptLink: data['transaction-receipt'],
           };
-          switch(data['log-action']){
-          case 'Create':
-              description += 'has created an entry for ';
-              break;
-          case 'Edit':
-              description += 'has edited an entry for ';
-              break;
-          case 'Archive':
-              description += 'has archived an entry for ';
-              break;
-          case 'Retrieve':
-              description += 'has retrieved an entry for ';
-              break;
-          case 'Delete':
-              description += 'has deleted an entry for ';
-              break;
-          default:
-              description += 'did something with an entry for ';
-              break;
-          }
-          if (data['log-user-details'] !== null) { 
-          description += `User#${data['log-user-details']['id']} `;    
-          } else if (data['log-item-details'] !== null) {
-          description += `Item# ${data['log-item-details']['id']} `;
-          } else if (data['log-instance-details'] !== null) {
-          description += `Instance# ${data['log-instance-details']['id']} `;
-          } else if (data['log-pdl-details'] !== null) {
-          description += `PDL# ${data['log-pdl-details']['id']} `;
-          } else {
-          description += 'some random entry in the database ';
-          }
   
-          if(data['log-reason']){
-          description += `Reason: ${data['log-reason']}`;
-          }
-          return description;
-      }
-        const transactionData = {
-          dbpk: data['pk'],
-          pk: data['transaction-id'],
-          transactionDateAndTime: data['transaction-created-at'],
-          transactionUser: data['transaction-user'],
-          transactionType: data['transaction-type'],
-          bjmpBranch: data['transaction-branch-location'],
-          transactionAmount: data['transaction-amount'],
-          transactionPdl: data['transaction-pdl'],
-        };
-  
-        const logData = {
-          dbpk: data['pk'],
-          pk: data['log-id'],
-          changelogDateAndTime: data['log-date'],
-          changelogDescription: descriptionCreator(),
-          logEmail: data['log-user'],
-          logAction: data['log-action'],
-          logItem: data['log-item-details'],
-          logPdl: data['log-pdl-details'],
-          logInstance: data['log-instance-details'],
-          logUser: data['log-user-details'],
-          logReason: data['log-reason'],
-        };
-  
-        const filterNullValues = (data) => {
           return Object.fromEntries(
-            Object.entries(data).filter(([_, value]) => value !== null && value !== undefined)
+            Object.entries(transactionData).filter(([_, value]) => value !== null && value !== undefined)
           );
-        };
+        } else {
+          const descriptionCreator = () => {
+            let description = `User ${data['log-user']} `;
   
-        return activeTab === 'transactionHistory' ? filterNullValues(transactionData) : filterNullValues(logData);
+            const formatFields = (fields) => {
+              return Object.entries(fields).map(([key, value]) => `${key}: ${value}`).join(', ');
+            };
+  
+            switch (data['log-action']) {
+              case 'Create':
+                description += 'has created an entry for ';
+                break;
+              case 'Edit':
+                description += 'has edited an entry for ';
+                break;
+              case 'Archive':
+                description += 'has archived an entry for ';
+                break;
+              case 'Retrieve':
+                description += 'has retrieved an entry for ';
+                break;
+              case 'Delete':
+                description += 'has deleted an entry for ';
+                break;
+              default:
+                description += 'did something with an entry for ';
+                break;
+            }
+  
+            if (data['log-user-details'] !== null) {
+              description += `User#${data['log-user-details']['id']} `;
+            } else if (data['log-item-details'] !== null) {
+              description += `Item#${data['log-item-details']['id']} `;
+            } else if (data['log-instance-details'] !== null) {
+              description += `Instance#${data['log-instance-details']['id']} `;
+            } else if (data['log-pdl-details'] !== null) {
+              description += `PDL#${data['log-pdl-details']['id']} `;
+            } else if (data['log-creditor-details'] !== null) {
+              description += `Creditor#${data['log-creditor-details']['id']} `;
+            } else {
+              description += 'some random entry in the database ';
+            }
+  
+            if (data['log-reason']) {
+              description += `Reason: ${data['log-reason']}`;
+            }
+            return description;
+          }
+  
+          const logData = {
+            dbpk: data['pk'],
+            pk: data['log-id'],
+            changelogDateAndTime: data['log-date'],
+            changelogDescription: descriptionCreator(),
+            logEmail: data['log-user'],
+            logAction: data['log-action'],
+            logItem: data['log-item-details'],
+            logPdl: data['log-pdl-details'],
+            logInstance: data['log-instance-details'],
+            logUser: data['log-user-details'],
+            logReason: data['log-reason'],
+          };
+  
+          return Object.fromEntries(
+            Object.entries(logData).filter(([_, value]) => value !== null && value !== undefined)
+          );
+        }
       });
   
       setTableData(transformedData.flat().filter(item => item !== null));
-      
+  
     } catch (error) {
       console.error('Error fetching data: ', error);
     }
@@ -195,8 +212,8 @@ export default function Audit() {
           actionIcon: 'fa-solid fa-eye fa-sm',
           actionFunctionality: {
             action: 'viewTransaction',
-            function: function(){
-              alert("View");
+            function: function(data,pk,link, type){
+              window.open(`${DOMAIN}/files/docs/receipts/${(type).toLowerCase()}/${link}`, '_blank');
             }
           },
           forArchive: false

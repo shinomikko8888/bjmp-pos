@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { PDLGeneralProfile } from './components';
+
 import { ColoredCard } from '../dashboard-page/components/overview-section/components';
 import { Helmet } from 'react-helmet-async';
 import { fetchDataWrapper } from '../../utils';
@@ -10,6 +10,9 @@ import { isoDayOfWeek } from '../../utils/data-management/chart-data/date-manage
 import { _adapters } from 'chart.js';
 import { startOfToday } from 'date-fns';
 import { barChartData, barChartOptions, chartDataTest, chartOptionsTest, matrixDataTest, matrixOptionsTest } from '../../utils/data-management/chart-data';
+import { LenderModal, PDLGeneralProfile, PaabotCreditors, RecentTransactions } from './components';
+import { ADD_DESCRIPTION, ADD_TITLE, EDIT_DESCRIPTION, EDIT_TITLE } from '../../constants';
+import { SuccessfulActionModal } from '../../components/modals/util-modals';
 
 export default function Profile() {
   const urlparams = new URLSearchParams(window.location.search);
@@ -17,6 +20,17 @@ export default function Profile() {
   const pk = urlparams.get('pk');
   const [pdlData, setPdlData] = useState({});
   const [imageSrc, setImageSrc] = useState(null);
+  const [isLenderModalOpen, setLenderModalOpen] = useState(false);
+  const [isSuccessfulActionModalOpen, setSuccessfulActionModalOpen] = useState(false)
+  const [lenderModalSubmitted, setLenderModalSubmitted] = useState(false);
+  const [creditorId, setCreditorId] = useState('');
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [primaryKey, setPrimaryKey] = useState('');
+  const [modifyControl, setModifyControl] = useState({
+    view: false,
+    add: false,
+    edit: false,
+  })
   useEffect(() => {
     fetchData();
   }, [id]);
@@ -105,46 +119,25 @@ const chartData = [
       chartIcon: 'fa-solid fa-receipt',
       chartName: 'Transaction Metrics',
       chartType: 'matrix',
-      chartSelect: [{
-          label: 'Per Day',
-          id: 0
-      },
-      {
-          label: 'Per Month',
-          id: 1
-      }],
-      chartData: [matrixDataTest(), matrixDataTest()],
-      chartOptions: [matrixOptionsTest(), matrixOptionsTest()],
+      chartSelector: [{
+        isDate: true,
+      }]
     },
     {   
       chartCtx: 'productOverview',
       chartIcon: 'fa-solid fa-boxes',
       chartName: 'Purchased Products Overview',
       chartType: 'bar',
-      chartSelect: [{
-        label: 'Today',
-        id: 0,
-      },
-      {
-        label: 'This Week',
-        id: 1
-      },
-      {
-        label: 'This Month',
-        id: 2
-      },
-      {
-        label: 'This Year',
-        id: 3
-      },
-      {
-        label: 'All-Time',
-        id: 4
-      }],
-      chartData: [barChartData(), barChartData(), barChartData(), barChartData(), barChartData()],
-      chartOptions: [barChartOptions(), barChartOptions(), barChartOptions(), barChartOptions(), barChartOptions()],
+      chartSelector: [{
+        isDate: true,
+      }]
     },
   ];
+
+  const submissionDetails = {
+    title: `Creditor ${modifyControl.edit ? EDIT_TITLE : modifyControl.add ? ADD_TITLE : ''}`,
+    description: `Creditor ${modifyControl.edit ? EDIT_DESCRIPTION : modifyControl.add ? ADD_DESCRIPTION : ""}`,
+  }
   return (
     <div>
       <Helmet>
@@ -176,18 +169,25 @@ const chartData = [
             <ChartTemplate data={chartData[1]}/>
         </div>
       </div>
-      <div className='row d-flex align-items-center'>
+      <div className='row d-flex align-items-center mt-4'>
         <SectionTitle title="'Paabot' Creditors and Transactions" icon="fa-solid fa-tent-arrow-left-right"/>
       </div>
       <hr></hr>
       <div className='row d-flex align-items-start'>
         <div className='col-6'>
-            Recent Transactions
+            <RecentTransactions branchLocation={pdlData['pdl-branch-location']} pid={id}/>
         </div>
         <div className='col-6'>
-            'Paabot' Creditors
+            <PaabotCreditors openLenderModal={() => setLenderModalOpen((prev) => !prev)} modifyControl={modifyControl} setModifyControl={setModifyControl}
+             pid={id} branchLocation={pdlData['pdl-branch-location']} isSuccessfulActionModalOpen={isSuccessfulActionModalOpen} setCreditorId={setCreditorId}
+             setSelectedRows={setSelectedRows} isSubmitted={lenderModalSubmitted}/>
         </div>
       </div>
+      <LenderModal stateChecker={isLenderModalOpen} stateControl={() => setLenderModalOpen((prev) => !prev)} modifyControl={modifyControl}
+      isSubmittedControl={() => setLenderModalSubmitted((prev) => !prev)} pid={id} branchLocation={pdlData['pdl-branch-location']} id={creditorId}/>
+      <SuccessfulActionModal stateChecker={isSuccessfulActionModalOpen} stateControl={() => setSuccessfulActionModalOpen((prev) => !prev)}
+      isSubmitted={lenderModalSubmitted} isSubmittedControl={() => setLenderModalSubmitted((prev) => !prev)} actionTitle={submissionDetails.title} 
+      actionDescription={submissionDetails.description}/>
     </div>
   );
 }

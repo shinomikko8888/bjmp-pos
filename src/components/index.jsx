@@ -9,6 +9,8 @@ import ChartTemplate from './data/chart';
 import SectionTitle from './utils/title';
 import SearchBar from './navigation/search-bar';
 import UnderConstruction from './utils/under-construction';
+import Pagination from './navigation/pagination';
+import DateSelector from './data/date-selector';
 
 export {
     AuthHeaderDisplay,
@@ -21,5 +23,7 @@ export {
     ChartTemplate,
     SectionTitle,
     SearchBar,
-    UnderConstruction
+    UnderConstruction,
+    Pagination,
+    DateSelector,
 }

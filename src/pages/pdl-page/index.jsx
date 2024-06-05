@@ -44,7 +44,12 @@ export default function Pdl() {
 
   const fetchData = async () => {
     try{
-      const rawData = await fetchDataWrapper(activeTab === "pdlList" ? 'get-pdls' : 'get-archived-pdls');
+      let params = []
+      const bjmpBranch = localStorage.getItem('bjmp-branch');
+        if (bjmpBranch !== 'BJMPRO-III Main Office') {
+            params.push(['br', bjmpBranch]);
+        }
+      const rawData = await fetchDataWrapper(activeTab === "pdlList" ? 'get-pdls' : 'get-archived-pdls', params);
       const transformedData = rawData.map(data => ({
         dbpk: data['pk'],
         pk: data['pdl-id'],

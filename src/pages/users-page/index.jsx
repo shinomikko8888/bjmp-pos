@@ -293,7 +293,7 @@ export default function User() {
         actionIcon: 'fa-solid fa-trash fa-sm',
         actionFunctionality: {
           action: 'deleteUser',
-          function: function(data){
+          function: function(data, prim){
             setDeleteModalOpen((prev) => !prev);
             setMethod('Single');
             setView(false);
@@ -302,6 +302,7 @@ export default function User() {
             setRetrieve(false);
             setDelete(true);
             setUserId(data);
+            setPrimaryKey(prim);
             setSelectedRows([]);
           }
         },

@@ -11,9 +11,9 @@ export default function SideNavigationBar({isSidebarOpen, toggleSidebar}){
         const handleResize = () => {
           // Update content based on screen width
           if (window.innerWidth < 1368) {
-            setContent('BJMP');
+            setContent('BJMPRO3POS');
           } else {
-            setContent('Bureau of Jail Management and Penology, Region III');
+            setContent('Bureau of Jail Management and Penology Region III POS');
           }
         };
     

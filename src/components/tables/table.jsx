@@ -6,7 +6,7 @@ import { empty_result } from "../../assets/svg";
 import SearchBar from "../navigation/search-bar";
 
 export default function TableTemplate(props){
-    const {tableData, archived, fromModal, returnData, setRows, actionSubmitted} = props
+    const {tableData, archived, fromModal, returnData, setRows, actionSubmitted, isSmallTable} = props
     const [selectedRows, setSelectedRows] = useState([]);
     const [isMultipleSelectionEnabled, setMultipleSelectionEnabled] = useState(false);
     const [filters, setFilters] = useState({});
@@ -18,7 +18,6 @@ export default function TableTemplate(props){
     const [rowsPerPage, setRowsPerPage] = useState(tableData.noOfItemsInTable);
     const pillTypes = tableData?.hasPills?.[1]?.pillTypes || [];
     const getCellStyleForType = (type) => {
-        // Map type to corresponding CSS class
         const cases = pillTypes.map(pillType => (
           `
           case '${pillType}':
@@ -36,6 +35,7 @@ export default function TableTemplate(props){
           })()
         `);
       };
+
       const filteredAndSortedData = useMemo(() => {
         let filteredAndSortedTableData = [...tableData.tableData];
       
@@ -340,7 +340,7 @@ export default function TableTemplate(props){
         }).filter(Boolean);
     };
     
-    const generateActions = (actions, archived, unselectable, returnData=null, dbpkData=null) => {
+    const generateActions = (actions, archived, unselectable, returnData=null, dbpkData=null, transactionReceiptLink=null, transactionType=null) => {
       const filteredActions = actions.filter(action => 
         action.forArchive !== archived && 
         !(unselectable && (action.actionName === 'Archive' || action.actionName === 'Edit'))
@@ -348,8 +348,13 @@ export default function TableTemplate(props){
           return filteredActions.map((action, index) => (
             <p key={index} onClick={() => {
               if (returnData !== null) {
-                action.actionFunctionality.function(returnData, dbpkData);
-              } else {
+                if (transactionReceiptLink !== null || transactionType !== null){
+                  action.actionFunctionality.function(returnData, dbpkData, transactionReceiptLink, transactionType)
+                } else {
+                  action.actionFunctionality.function(returnData, dbpkData);
+                }
+              } 
+              else {
                 action.actionFunctionality.function();
               }
             }}>
@@ -359,7 +364,7 @@ export default function TableTemplate(props){
           ));
       };
       
-      const handleRowClick = (pk, unselectable=false, dbpk) => {
+      const handleRowClick = (pk, unselectable=false, dbpk, ) => {
         if (isMultipleSelectionEnabled && pk && !unselectable) { 
             setSelectedRows((prevSelectedRows) => {
               const isSelected = prevSelectedRows.some((row) => row.pk === pk);
@@ -390,6 +395,7 @@ export default function TableTemplate(props){
           <tr>
             <td colSpan={tableData.tableHeaders.length + 1}>
               <div className={`d-flex flex-column align-items-center justify-content-center ${!fromModal ? 'table-display-empty-padding-modal' : 'table-display-empty-padding'} table-display-empty-hover`}>
+                
                 <img src={empty_result} width={300} alt="Empty Result" />
                 <div className={`${!fromModal ? 'table-display-empty-modal' : 'table-display-empty'} mt-2`}>
                   There is no data present at the moment.
@@ -407,6 +413,8 @@ export default function TableTemplate(props){
         const hasData = Object.values(rowData).some((value) => value !== null && value !== undefined);
         const isSelected = selectedRows.some((row) => row.pk === rowData.pk && row.dbpk === rowData.dbpk);
         const rowClass = isMultipleSelectionEnabled && hasData && isSelected ? "selected-row" : "";
+        const transactionReceiptLink = rowData.transactionReceiptLink ? rowData.transactionReceiptLink : null;
+        const transactionType = rowData.transactionType ? rowData.transactionType : null;
         return (
           <tr key={rowData.pk} onClick={() => handleRowClick(rowData.pk, rowData.unselectable, rowPrimaryKey)} className={`${isEven ? "zebra-even" : "zebra-odd"} ${rowClass}`} 
           style={{ cursor: isMultipleSelectionEnabled && hasData && !rowData.unselectable ? 'pointer' : 'default', 
@@ -435,6 +443,8 @@ export default function TableTemplate(props){
                   ? `Log#${rowData[header.headerId]}`
                   : header.headerId === "pk" && header.headerSecondaryID === 'userId' && rowData[header.headerId]
                   ? `User#${rowData[header.headerId]}`
+                  : header.headerId === "pk" && header.headerSecondaryID === 'lenderId' && rowData[header.headerId]
+                  ? `Creditor#${rowData[header.headerId]}`
                   : header.headerId === "type" && rowData[header.headerId]
                     ? <div className="d-flex">{rowData[header.headerId].map((type, i) => (
                       <div key={i} style={{ padding: "10px", fontSize: "12px" }} className={`type-cell ${getCellStyleForType(type)}`}>
@@ -453,12 +463,18 @@ export default function TableTemplate(props){
                       <div style={{ padding: "10px", fontSize: "12px" }} className={`type-cell ${getCellStyleForType(rowData[header.headerId])}`}>
                       </div>
                     </div>
+                    : header.headerId === "isApproved" && rowData[header.headerId] ? 
+                    <div className="d-flex">
+                      <div style={{ padding: "5px 10px", fontSize: "16px" }} className={`type-cell ${rowData['isApproved']}`}>
+                        {rowData['isApproved'] !== 'False' ? (<i className="fa-solid fa-check"></i>) : (<i className="fa-solid fa-xmark"></i>)}
+                      </div>
+                    </div>
                     : rowData[header.headerId]}
               </td>
             )})}
-            {hasData && tableData.tableActions && !isMultipleSelectionEnabled && (
+            {hasData && tableData.tableActions && !isMultipleSelectionEnabled && tableData.tableActions.length > 0 && (
               <td className="action-buttons" style={{ padding: paddingStyle }}>
-                {generateActions(tableData.tableActions, archived, rowData.unselectable, rowData.pk, rowPrimaryKey)}
+                {generateActions(tableData.tableActions, archived, rowData.unselectable, rowData.pk, rowPrimaryKey, transactionReceiptLink, transactionType)}
               </td>
             )}
             {!hasData && <td style={{ padding: paddingStyle }}></td>}
@@ -504,17 +520,16 @@ export default function TableTemplate(props){
       useEffect(() => {
         setHeaderNames(tableData.tableHeaders.map(header => header.headerName));
       }, [tableData.tableHeaders]);
-
     return(
         <>
-            <div className="table-container p-4">
+            <div className={`table-container${isSmallTable ? '-small' : ''} p-4`}>
                 <div className='row mt-1'>
                     <div className='row d-flex align-items-center position-relative'>
-                        <div className='col-4 d-flex align-items-center mb-3'>
+                        <div className={`col-${!fromModal ? '5' : '7'} d-flex align-items-center `}>
                             <i className={tableData.tableIcon}></i>
-                            <h6 className='fw-bold fs-5 m-0 mx-2'>{tableData.tableName}</h6>
+                            <h6 className={`fw-bold ${!fromModal ? 'fs-5' : 'small'} m-0 mx-2`}>{tableData.tableName}</h6>
                         </div>
-                        <div className='col-8 d-flex justify-content-end'>
+                        <div className={`col-${!fromModal ? '7' : '5'} d-flex justify-content-end`}>
                         {tableData.hasPills[0] ? (
                                 <div className='mx-4 d-flex align-items-center' style={{fontSize: '12px'}}>
                                     <div>
@@ -552,14 +567,12 @@ export default function TableTemplate(props){
                                         )
                                     }      
                                     {generateFilterDropdowns()}
-                                    {!isMultipleSelectionEnabled && (
-                                    <th>
-                                        Actions
-                                    </th>
-                                    )
-
-                                    }
-                                    
+                                    {!isMultipleSelectionEnabled && tableData.tableActions && tableData.tableActions.length > 0 && (
+                                          <th>
+                                              Actions
+                                          </th>
+                                      )}
+                                                                  
                                 </thead>
                                 <tbody>
                                 {renderTableRows()}

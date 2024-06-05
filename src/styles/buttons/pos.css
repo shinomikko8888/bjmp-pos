@@ -8,8 +8,9 @@
     transition: all 0.3s ease-in-out;
     cursor: pointer;
     overflow: hidden;
-    margin: 8px;
+    margin: 6px;
 }
+
 
 .pos-button-image{
     border-radius: 100px;
@@ -70,6 +71,21 @@
   .pos-empty-cell{
     border: 1px dashed #ccc;
     border-radius: 15px;
-    padding: 80px 0;
+    padding: 85px 0;
     margin: 8px;
+  }
+  .pos-empty-cell-small{
+    border: 1px dashed #ccc;
+    border-radius: 15px;
+    padding: 65px 0;
+    margin: 8px;
+}
+  .pos-button-container, .pos-button-input{
+    font-size: 12px;
+  }
+
+  @media screen and (max-width: 1366px)  {
+    .pos-empty-cell-small{
+        padding: 80px 0;
+      }
   }

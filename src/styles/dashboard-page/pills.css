@@ -83,4 +83,15 @@
     padding: 8px;
   }
 
+
+  .type-cell.False{
+    background-color: #ed4337;
+    color: white;
+    padding: 8px;
+  }
   
+  .type-cell.True{
+    background-color: #4bb543;
+    color: white;
+    padding: 8px;
+  }

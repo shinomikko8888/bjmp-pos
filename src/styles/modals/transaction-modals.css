@@ -15,7 +15,7 @@
     height: 100%;
 }
 
-.purchase-modal-pdl .text-input, .purchase-modal-pdl select{
+.purchase-modal-pdl .text-input, .purchase-modal-pdl select, .purchase-modal-pdl .text-input:disabled{
     background-color: transparent;
     color: white;
     border: 1px solid #fff;

@@ -1,8 +1,7 @@
 import React from "react";
-import { ProfitOverview } from "./components";
+import { LowStocked, PopularItems, ProfitOverview } from "./components";
 import { SectionTitle } from "../../../../components";
-export default function InventorySection(){
-    
+export default function InventorySection(props){
     return(
     <>
         <div className='row d-flex align-items-center mt-5'>
@@ -11,14 +10,17 @@ export default function InventorySection(){
       <hr></hr>
       <div className='row'>
         <div className='col-6'>
-          <ProfitOverview />
+          <ProfitOverview/>
         </div>
         <div className='col-3'>
-          Popular Items
+          <PopularItems />
         </div>
         <div className='col-3'>
-          Low Item Count
+          <LowStocked />
         </div>
+      </div>
+      <div className="row">
+      
       </div>
     </>);
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { VulnerableRatio } from "./components";
+import { HighestSpender, LowBalance, VulnerableRatio } from "./components";
 import { SectionTitle } from "../../../../components";
 export default function PDLSection(){
     
@@ -13,15 +13,15 @@ export default function PDLSection(){
       <div>
         <div className='row'>
             <div className='col-3'>
-                Low Balance
+            <LowBalance />
             </div>
             <div className='col-3'>
-                Highest Spender
+            <HighestSpender />
             </div>
-            <div className='col-6'>
-                <VulnerableRatio />
+            <div className='col-6 '>
+            <VulnerableRatio />
             </div>
-        </div>
+         </div>
       </div>
     </>);
 

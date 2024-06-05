@@ -1,59 +1,64 @@
-const scaleMonth = {
-    y: {
-      type: 'time',
-      left: 'left',
-      offset: true,
-      time: {
-        unit: 'week',
-        round: 'week',
-        isoWeekday: 1,
-        displayFormats: {
-          week: 'I'
-        }
+const scaleMonth = (date, ctx) => {
+  const currentDate = new Date(`${date[`${ctx}-selected-year`]}-${date[`${ctx}-selected-month`]}-01`); 
+  return {
+      y: {
+          type: 'time',
+          left: 'left',
+          offset: true,
+          time: {
+              unit: 'week',
+              round: 'week',
+              isoWeekday: 1,
+              displayFormats: {
+                  week: 'I'
+              }
+          },
+          ticks: {
+              maxRotation: 0,
+              autoSkip: true,
+              padding: 1
+          },
+          grid: {
+              display: false,
+              drawBorder: false,
+              tickLength: 0,
+          },
+          title: {
+              display: true,
+              font: { size: 15, weight: 'bold' },
+              text: ({ chart }) => chart.scales.x._adapter.format(currentDate, 'MMM, yyyy'),
+              padding: 0
+          }
       },
-      ticks: {
-        maxRotation: 0,
-        autoSkip: true,
-        padding: 1
-      },
-      grid: {
-        display: false,
-        drawBorder: false,
-        tickLength: 0,
-      },
-      title: {
-        display: true,
-        font: {size: 15, weigth: 'bold'},
-        text: ({chart}) => chart.scales.x._adapter.format(Date.now(), 'MMM, yyyy'),
-        padding: 0
+      x: {
+          type: 'time',
+          position: 'top',
+          offset: true,
+          time: {
+              unit: 'day',
+              parser: 'i',
+              isoWeekday: 1,
+              displayFormats: {
+                  day: 'iiiiii'
+              }
+          },
+          reverse: false,
+          ticks: {
+              source: 'data',
+              padding: 0,
+              maxRotation: 0,
+          },
+          grid: {
+              display: false,
+              drawBorder: false,
+          }
       }
-    },
-    x: {
-      type: 'time',
-      position: 'top',
-      offset: true,
-      time: {
-        unit: 'day',
-        parser: 'i',
-        isoWeekday: 1,
-        displayFormats: {
-          day: 'iiiiii'
-        }
-      },
-      reverse: false,
-      ticks: {
-        source: 'data',
-        padding: 0,
-        maxRotation: 0,
-      },
-      grid: {
-        display: false,
-        drawBorder: false,
-      }
-    }
-  }
+  };
+};
 
-const scaleYear = {
+const scaleYear = (date, ctx) =>  {
+  const currentDate = new Date(`${date[`${ctx}-selected-year`]}-${date[`${ctx}-selected-month`]}-01`); 
+  return {
     y: {
       type: 'time',
       offset: true,
@@ -106,7 +111,7 @@ const scaleYear = {
         drawBorder: false,
         tickLength: 0,
       }
-    }
+    }}
   }
 
   export {

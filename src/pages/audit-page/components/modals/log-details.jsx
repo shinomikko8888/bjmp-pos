@@ -48,17 +48,21 @@ export default function LogModal(props){
             data[`log-${data['log-item-details'] ? 'item' 
             : data['log-instance-details'] ? "instance" 
             : data['log-pdl-details'] ? "pdl" 
-            : data['log-user-details'] ? "user" : ''}-details`]['existingFields'] ? `From: ${formatFields(data[`log-${data['log-item-details'] ? 'item' 
+            : data['log-user-details'] ? "user" 
+            : data['log-creditor-details'] ? "creditor" : ''}-details`]['existingFields'] ? `From: ${formatFields(data[`log-${data['log-item-details'] ? 'item' 
             : data['log-instance-details'] ? "instance" 
             : data['log-pdl-details'] ? "pdl" 
-            : data['log-user-details'] ? "user" : ''}-details`]['existingFields'])}. ` : '';
+            : data['log-user-details'] ? "user" 
+            : data['log-creditor-details'] ? "creditor" : ''}-details`]['existingFields'])} ` : '';
             const updatedFields = data[`log-${data['log-item-details'] ? 'item' 
             : data['log-instance-details'] ? "instance" 
             : data['log-pdl-details'] ? "pdl" 
-            : data['log-user-details'] ? "user" : ''}-details`]['updatedFields'] ? `To ${formatFields(data[`log-${data['log-item-details'] ? 'item' 
+            : data['log-user-details'] ? "user" 
+            : data['log-creditor-details'] ? "creditor" : ''}-details`]['updatedFields'] ? `To ${formatFields(data[`log-${data['log-item-details'] ? 'item' 
             : data['log-instance-details'] ? "instance" 
             : data['log-pdl-details'] ? "pdl" 
-            : data['log-user-details'] ? "user" : ''}-details`]['updatedFields'])} ` : '';
+            : data['log-user-details'] ? "user" 
+            : data['log-creditor-details'] ? "creditor" : ''}-details`]['updatedFields'])} ` : '';
             setLogData({
                 "log-date": data['log-date'] || '',
                 "log-user": data['log-user'] || '',
@@ -66,11 +70,13 @@ export default function LogModal(props){
                 "log-type": data['log-item-details'] ? 'Item' 
                 : data['log-instance-details'] ? "Instance" 
                 : data['log-pdl-details'] ? "PDL" 
-                : data['log-user-details'] ? "User" : '',
+                : data['log-user-details'] ? "User" 
+                : data['log-creditor-details'] ? "Creditor" : '',
                 "log-data": data['log-item-details'] ? `${existingFields}${updatedFields}`
                 : data['log-instance-details'] ? `${existingFields}${updatedFields}`
                 : data['log-pdl-details'] ? `${existingFields}${updatedFields}`
-                : data['log-user-details'] ? `${existingFields}${updatedFields}` : [],
+                : data['log-user-details'] ? `${existingFields}${updatedFields}` 
+                : data['log-creditor-details'] ? `${existingFields}${updatedFields}` : [],
                 "log-reason": data['log-reason'] || '',
             })
 

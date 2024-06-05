@@ -4,10 +4,11 @@ import { SearchBar } from "../../../components";
 import PurchaseDetails from "./modals/purchase-details";
 
 export default function PosTable(props) {
-
+    const {fetchCommodityData, commodityData, setErrorMessage} = props
+    
     return(
         <>
-            <div className="table-container p-4">
+            <div className="pos-table-container p-4">
                 <div className="row">
                     <div className='col-4 d-flex align-items-center mb-3'>
                         <i className="fa-solid fa-cash-register"></i>
@@ -20,7 +21,7 @@ export default function PosTable(props) {
                 </div>
                 <div className="row">
                     <div className="col-12">
-                        <PosSelector/>
+                        <PosSelector fetchCommodityData={fetchCommodityData} commodityData={commodityData} setErrorMessage={setErrorMessage}/>
                     </div>
                 </div>
             </div>

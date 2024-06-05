@@ -4,42 +4,51 @@ import { color, getHoverColor } from 'chart.js/helpers'
 import { _adapters } from "chart.js";
 import { ChartTemplate, SectionTitle } from "../../../../components";
 import { isoDayOfWeek } from "../../../../utils/data-management/chart-data/date-management-test";
-import { startOfToday } from "date-fns";
+import { isDate, startOfToday } from "date-fns";
 import { scaleMonth, scaleYear } from "../../../../constants/chart-scales";
-import { barChartData, barChartOptions, matrixDataTest, matrixOptionsTest} from "../../../../utils/data-management/chart-data";
+import { barChartData, barChartOptions, matrixDataTest, matrixDateMonth, matrixDateMonthOption, matrixDateYear, matrixDateYearOption, matrixOptionsTest} from "../../../../utils/data-management/chart-data";
+import { fetchDataWrapper } from "../../../../utils";
 
-export default function OverviewSection(){
+export default function OverviewSection(props){
+    const {data} = props
+
     const coloredCards = [
         {
             color: 'blue-card',
             icon: 'fa-solid fa-comments-dollar fa-3x',
-            name: 'PDL Spending Total',
-            data: 'Nothing yet...',
-            type: 'single'
+            name: `All Time PDL Spending Total ${
+                localStorage.getItem('bjmp-branch') !== 'BJMPRO-III Main Office' ? 
+                `for ${localStorage.getItem('bjmp-branch')}` : ''}`,
+            data: `₱${parseFloat(data['all-time-pdl-spending-total']).toFixed(2)}`,
+            type: 'single',
+            noSelector: true,
         },
         {
             color: 'yellow-card',
             icon: 'fa-solid fa-receipt fa-3x',
-            name: 'Total Transactions',
-            firstModifier: 'All Time',
-            firstData: '0',
-            secondModifier: 'This Week',
-            secondData: '0',
-            type: 'double'
+            name: 'All Time Total Transactions',
+            data: data['all-time-total-transactions'],
+            type: 'single',
+            noSelector: true
         },
         {
             color: 'red-card',
             icon: 'fa-solid fa-cart-flatbed fa-3x',
-            name: 'Most Popular Product',
-            data: 'Nothing yet...',
-            type: 'single'
+            name: 'Most Popular Product of All Time',
+            firstModifier: 'Product (Abbreviated)',
+            firstData: data['most-popular-product'] && data['most-popular-product'].name || '',
+            secondModifier: 'Sales',
+            secondData: data['most-popular-product'] && data['most-popular-product'].qty || '',
+            type: 'double',
+            noSelector: true,
         },
         {
             color: 'green-card',
             icon: 'fa-solid fa-money-bill fa-3x',
             name: 'Money in Circulation',
-            data: 'Nothing yet...',
-            type: 'single'
+            data: `₱${parseFloat(data['money-in-circulation']).toFixed(2)}`,
+            type: 'single',
+            noSelector: true,
         },
     ]
     const chartData = [
@@ -48,27 +57,23 @@ export default function OverviewSection(){
           chartIcon: 'fa-solid fa-comments-dollar',
           chartName: 'Spending Total',
           chartType: 'matrix',
-          chartSelect: [
-              { label: 'Per Day', id: 0 },
-              { label: 'Per Month', id: 1 }
-          ],
-          chartData: [matrixDataTest(), matrixDataTest()],
-          chartOptions: [matrixOptionsTest(), matrixOptionsTest()],
+          chartSelector: [{
+            isDate: true,
+          }],
+          chartColor: 'blue'
       },
       {   
         chartCtx: 'totalTransac',
         chartIcon: 'fa-solid fa-receipt',
         chartName: 'Total Transactions',
-        chartType: 'bar',
-        chartSelect: [
-            { label: 'Per Day', id: 0 },
-            { label: 'Per Month', id: 1 }
-        ],
-        chartData: [barChartData(), barChartData()],
-        chartOptions: [barChartOptions(), barChartOptions()],
+        chartType: 'matrix',
+        chartSelector: [{
+            isDate: true,
+        }],
+        chartColor: 'red'
+
     },
     ];
-    
 
     return(
     <>

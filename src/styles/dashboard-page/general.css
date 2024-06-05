@@ -61,3 +61,12 @@ body{
     font-weight: lighter;
     font-size: 14px;
 }
+
+.autocomplete {
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+}

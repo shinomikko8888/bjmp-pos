@@ -3,7 +3,7 @@
     min-height: 100vh;
     width: 78px;
     padding: 6px 14px;
-    z-index: 20;
+    z-index: 60;
     transition: all .5s ease;
     position: fixed;
     top: 0;
@@ -98,8 +98,8 @@
     position: absolute;
     top: -20px;
     left: calc(100% + 15px);
-    z-index: 3;
-    background-color: var(--color-white);
+    z-index: 61;
+    background-color: white;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
     padding: 6px 14px;
     font-size: 15px;
@@ -117,7 +117,7 @@
     transition: all 0.4s ease;
     top: 50%;
     transform: translateY(-50%);
-  
+    
   }
   
   .sidebar.open li .tooltip {

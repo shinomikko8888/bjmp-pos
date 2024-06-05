@@ -1,5 +1,5 @@
 import React from "react";
-import { DOMAIN } from "../../../constants";
+import { DOMAIN } from "../../../../constants";
 
 export default function PDLGeneralProfile(props) {
     const {data, imageSrc} = props

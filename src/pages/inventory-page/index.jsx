@@ -45,7 +45,12 @@ export default function Inventory() {
 
   const fetchData = async () => {
     try{
-      const rawData = await fetchDataWrapper(activeTab === "stockManagement" ? 'get-items' : 'get-archived-items');
+      let params = []
+      const bjmpBranch = localStorage.getItem('bjmp-branch');
+        if (bjmpBranch !== 'BJMPRO-III Main Office') {
+            params.push(['br', bjmpBranch]);
+        }
+      const rawData = await fetchDataWrapper(activeTab === "stockManagement" ? 'get-items' : 'get-archived-items', params);
       const transformedData = rawData.map(data => ({
         dbpk: data['pk'],
         pk: data['item-id'],

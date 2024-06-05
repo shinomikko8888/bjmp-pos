@@ -34,14 +34,14 @@ export default function DeleteModal (props) {
         prim: prim && prim,
         user: localStorage.getItem('user-email'),
       })
-    }, [type, method, id] )
+    }, [type, method, id, prim] )
     
     const handleChange = async (event) => {
       await handleChangeWrapper(event, deleteValue, setDeleteValue);
     };
 
     const handleSubmit = async (event) => {
-        if(deleteValue.reason === '')
+        if(deleteValue.reason === '' && filteredReasons.length !== 0)
           setErrorMessage('Please set a reason for deleting!');
         else{
           setErrorMessage('');

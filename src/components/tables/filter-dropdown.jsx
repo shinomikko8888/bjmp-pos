@@ -45,6 +45,7 @@ export default function FilterDropdown({ column, options, onSelect }) {
         switch (column) {
             case 'name':
             case 'userName':
+            case 'lenderName':
                 return (
                     <>
                         <input
