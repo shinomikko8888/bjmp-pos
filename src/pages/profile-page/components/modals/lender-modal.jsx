@@ -22,6 +22,7 @@ export default function LenderModal(props){
             'lender-relationship': '',
             'lender-id-path': '',
         })
+        console.log(pid);
         setErrorMessage('');
         setImageSrc(null);
         if(modifyControl.edit && stateChecker){

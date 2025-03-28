@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { routes } from "./config";
-import { hideNavBar, hideSideBar /*includeCheckoutBar*/ } from "./utils";
+import { fetchDataWrapper, hideNavBar, hideSideBar /*includeCheckoutBar*/ } from "./utils";
 import { SideNavigationBar, TopNavigationBar } from "./components";
 import './App.css'
 import Modal from "./components/modals";
@@ -19,6 +19,7 @@ function App() {
   //const isPageHasCheckoutbar = includeCheckoutBar(location, routes);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
   const [listExtend, setListExtend] = useState(false);
+  const [userType, setUserType] = useState('');
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -49,12 +50,23 @@ function App() {
     }
   }, []);
   const sidebarClass = isPageHasSideBar ? (isSidebarOpen ? 'sidebar-open' : 'sidebar-closed') : '';
-
   const combinedClassName = `${sidebarClass}`.trim();
+  
+  useEffect(() => {
+    fetchData();
+  }, [localStorage.getItem('user-email')])
 
+  
+
+  const fetchData = async () => {
+    if(localStorage.getItem('user-email')){
+      const response = await fetchDataWrapper('get-user', [['em', `'${localStorage.getItem('user-email')}'`]])
+      setUserType(response['user-type']);
+    }
+  }
   return (
     <div>
-      {isPageHasSideBar && <SideNavigationBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
+      {isPageHasSideBar && <SideNavigationBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} userType={userType}/>}
       {isPageHasNavBar && <TopNavigationBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>}
       
       <div className={combinedClassName}>
@@ -64,7 +76,7 @@ function App() {
           route.protected ? (
             <Route key={route.path} path={route.path} element={isAuthenticated() ? route.component : <Navigate to="/login" />} />
           ) : (
-            <Route key={route.path} path={route.path} element={!isAuthenticated() ? route.component : <Navigate to="/dashboard"/> } />
+            <Route key={route.path} path={route.path} element={!isAuthenticated() ? route.component : <Navigate to={userType !== 'Concessionaire Officer' ? "/dashboard" : "/pos"}/> } />
           ))
         )}
       </Routes>

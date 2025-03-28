@@ -1,8 +1,8 @@
 import React from "react";
 import { HighestSpender, LowBalance, VulnerableRatio } from "./components";
 import { SectionTitle } from "../../../../components";
-export default function PDLSection(){
-    
+export default function PDLSection(props){
+    const {data} = props
     
     return(
     <>
@@ -13,10 +13,10 @@ export default function PDLSection(){
       <div>
         <div className='row'>
             <div className='col-3'>
-            <LowBalance />
+            <LowBalance data={data.pdlsWithLowBalance}/>
             </div>
             <div className='col-3'>
-            <HighestSpender />
+            <HighestSpender data={data.highestSpenders}/>
             </div>
             <div className='col-6 '>
             <VulnerableRatio />

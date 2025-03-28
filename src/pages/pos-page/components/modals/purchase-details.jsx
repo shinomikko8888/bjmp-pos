@@ -5,12 +5,16 @@ import CheckoutList from "../sections/checkout-menu/checkout-list";
 import SearchPdlForm from "./search-pdl-form";
 import { handleChangeWrapper, handleSubmitWrapper, isFormDataValid } from "../../../../utils";
 import { DOMAIN } from "../../../../constants";
+import { FingerprintModal } from "../../../../components/modals/util-modals";
 export default function PurchaseDetails(props){
-    const {stateControl, stateChecker, commodityData, totalPrice, isSubmittedControl, setResultValue} = props
+    const {stateControl, stateChecker, commodityData, totalPrice, isSubmittedControl, setResultValue, setFingerprintModalOpen,
+        isFingerprintModalOpen
+    } = props
     const [formData, setFormData] = useState({});
     const [isNamePopulated, setIsNamePopulated] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [buttonState, setButtonState] = useState(false);
     useEffect(() => {
         setFormData({
             'pdl-data': '',
@@ -25,12 +29,7 @@ export default function PurchaseDetails(props){
             setIsNamePopulated(false);
             setSearchTerm('');
         }
-       
-        
     }, [stateChecker])
-
-
-
     const eraseData = (name) => {
         setFormData({
             ...formData,
@@ -61,38 +60,39 @@ export default function PurchaseDetails(props){
                 setErrorMessage('Please fill out all fields!')
             } else {
                 if (formData['purchase-type'] === 'Permission') {
+                    setButtonState(true);
                     if (formData['permission']) {
-                        setErrorMessage('');
                         const pdlBalance = parseFloat(formData['pdl-data']['pdl-balance']).toFixed(2);
                         const totalPrice = parseFloat(formData['total-price']);
                         const resultValue = (pdlBalance - totalPrice).toFixed(2);
                         const response = await handleSubmitWrapper(event, formData, false);
                         if(response.success){
+                            setErrorMessage('');
                             setResultValue(resultValue);
                             stateControl((prev) => !prev);
                             isSubmittedControl((prev) => !prev);
-                            window.open(`${DOMAIN}/files/docs/receipts/purchase/${response.filepath}`, '_blank');
+                            window.open(`${DOMAIN}/files/docs/receipts/purchase/${response.filepath}`, '_blank'); 
+                            setButtonState(false);
+                        } else {
+                            setErrorMessage(response.message);
+                            setButtonState(false);
                         }
-                        
                     } else {
                         setErrorMessage('Please tick the box before proceeding to payment!');
+                        setButtonState(false);
                         return;
                     }
                 }
                 else if (formData['purchase-type'] === 'Biometrics') {
                     if (formData['pdl-data']['pdl-fingerprint-id']) {
+                        setFingerprintModalOpen((prev) => !prev);
                         setErrorMessage('');
-                        console.log(formData);
-                        alert('Fingerprint Modal');
                     } else {
                         setErrorMessage('No fingerprint id detected.');
                         return;
                     }
                 }
-                    
-                
             }
-           
         } catch (error) {
             console.error('Error: ', error);
         }
@@ -137,7 +137,7 @@ export default function PurchaseDetails(props){
                         setIsNamePopulated={setIsNamePopulated} isNamePopulated={isNamePopulated} searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
                         <div className="d-flex justify-content-end mt-4">
                         <p className="error-message mx-3 white-text">{errorMessage}</p>
-                            <button className="pay-now-button" onClick={handleSubmit}>Pay Now!</button>
+                            <button className="pay-now-button" onClick={handleSubmit} disabled={buttonState}>Pay Now!</button>
                         </div>
                         
                     </div>
@@ -160,6 +160,15 @@ export default function PurchaseDetails(props){
             stateControl={stateControl}
             customWidth={'60%'}
             customZIndex={25} 
+            />
+            <FingerprintModal 
+            stateChecker={isFingerprintModalOpen} 
+            stateControl={() => setFingerprintModalOpen((prev) => !prev)} 
+            type="purchase" 
+            formData={formData}
+            setResultValue={setResultValue}
+            isSubmittedControl={() => isSubmittedControl((prev) => !prev)}
+            setPurchaseState={() => stateControl((prev) => !prev)}
             />
         </>
     )

@@ -12,13 +12,25 @@
     background-color: white;
   }
   
+
+  .sidebar-small {
+    width: 78px;
+    padding: 6px 14px;
+    z-index: 60;
+    transition: all .5s ease;
+    top: 0;
+    left: 0;
+    font-family: 'Tahoma';
+    background-color: white;
+  }
+  
   .sidebar.open {
     width: 250px;
   }
   
   
   
-  .sidebar .logo-details {
+  .sidebar .logo-details, .sidebar-small .logo-details {
     height: 60px;
     display: flex;
     align-items: center;
@@ -26,7 +38,7 @@
 
   }
   
-  .sidebar .logo-details .icon {
+  .sidebar .logo-details .icon, .sidebar-small .logo-details .icon{
     opacity: 0;
     transition: all 0.5s ease;
   }
@@ -37,7 +49,7 @@
   }
   
   
-  .sidebar .logo-details .logo-name {
+  .sidebar .logo-details .logo-name, .sidebar-small .logo-details .logo-name {
     color: #646F85;
     font-size: 13px;
     font-weight: 600;
@@ -52,7 +64,7 @@
   }
 
   
-  .sidebar .logo-details #btn {
+  .sidebar .logo-details #btn, .sidebar-small .logo-details #btn {
     position: absolute;
     top: 50%;
     right: 0;
@@ -70,10 +82,9 @@
   .logo {
     width: 45px;
     height: 45px;
-    
   }
   
-  .sidebar i {
+  .sidebar i, .sidebar-small i {
     color: #646F85;
     ;
     height: 60px;
@@ -83,18 +94,18 @@
     text-align: center;
   }
   
-  .sidebar .nav-list {
+  .sidebar .nav-list, .sidebar-small .nav-list {
     margin-top: 20px;
     height: 100%;
   }
   
-  .sidebar li {
+  .sidebar li, .sidebar-small li {
     position: relative;
     margin: 8px 0;
     list-style: none;
   }
   
-  .sidebar li .tooltip {
+  .sidebar li .tooltip, .sidebar-small li .tooltip {
     position: absolute;
     top: -20px;
     left: calc(100% + 15px);
@@ -111,7 +122,7 @@
     color: #555;
   }
   
-  .sidebar li:hover .tooltip {
+  .sidebar li:hover .tooltip, .sidebar-small li:hover .tooltip {
     opacity: 1;
     pointer-events: auto;
     transition: all 0.4s ease;
@@ -157,7 +168,9 @@
   }
   
   .sidebar li a,
-  .sidebar li button {
+  .sidebar li button,
+  .sidebar-small li a,
+  .sidebar-small li button {
     display: flex;
     height: 100%;
     width: 100%;
@@ -172,7 +185,9 @@
   }
   
   .sidebar li a::after,
-  .sidebar li button::after {
+  .sidebar li button::after,
+  .sidebar-small li a::after,
+  .sidebar-small li button::after {
     content: "";
     position: absolute;
     width: 100%;
@@ -186,7 +201,9 @@
   }
   
   .sidebar li a.active,
-  .sidebar li button.active {
+  .sidebar li button.active,
+  .sidebar-small li a.active,
+  .sidebar-small li button.active {
     color: white;
     background-color: #646F85;
     border-radius: 5px;
@@ -195,18 +212,23 @@
   
   
   .sidebar li a:hover::after,
-  .sidebar li button:hover::after {
+  .sidebar li button:hover::after, 
+  .sidebar-small li a:hover::after,
+  .sidebar-small li button:hover::after {
     transform: scaleX(1);
     color: var(--color-default)
   }
   
-  .sidebar ul{
+  .sidebar ul,
+  .sidebar-small ul{
     padding: 0;
     margin-top: 20px;
   }
   
   .sidebar li a .link-name,
-  .sidebar li button .link-name {
+  .sidebar li button .link-name,
+  .sidebar-small li a .link-name,
+  .sidebar-small li button .link-name {
     color: #646F85;
     ;
     font-size: 15px;
@@ -221,20 +243,32 @@
   .sidebar li a.active .link-name ,
   .sidebar li a.active i,
   .sidebar li button.active .link-name ,
-  .sidebar li button.active i {
+  .sidebar li button.active i,
+  .sidebar-small li a.active .link-name ,
+  .sidebar-small li a.active i,
+  .sidebar-small li button.active .link-name ,
+  .sidebar-small li button.active i {
     color: white;
   }
   .sidebar li a.active .link-name:hover ,
   .sidebar li a.active i:hover,
   .sidebar li button.active .link-name:hover ,
-  .sidebar li button.active i:hover {
+  .sidebar li button.active i:hover,
+  .sidebar-small li a.active .link-name:hover ,
+  .sidebar-small li a.active i:hover,
+  .sidebar-small li button.active .link-name:hover ,
+  .sidebar-small li button.active i:hover {
     color: white;
   }
   
   .sidebar li a:hover .link-name,
   .sidebar li a:hover i,
   .sidebar li button:hover .link-name,
-  .sidebar li button:hover i {
+  .sidebar li button:hover i,
+  .sidebar-small li a:hover .link-name,
+  .sidebar-small li a:hover i,
+  .sidebar-small li button:hover .link-name,
+  .sidebar-small li button:hover i  {
     transition: all 0.5s ease;
     color: white;
   }

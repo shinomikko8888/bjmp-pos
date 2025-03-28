@@ -13,13 +13,13 @@ export default function LoadTopRowPage2(props){
         try {
             let params = [];
             if (loadData['loading-type'] === 'Visitor') {
-                params.push(['pid', loadData['pdl-data']['pdl-id']], ['br', loadData['pdl-data']['pdl-branch-location']]);
+                params.push(['pid', loadData['pdl-data']['pk']], ['br', loadData['pdl-data']['pdl-branch-location']]);
                 const data = await fetchDataWrapper('get-lenders', params);
                 const filteredData = data.filter(entry => entry['is-approved'] !== 0);
                 setOptions(filteredData);
             } else if (loadData['loading-type'] === 'Livelihood') {
                 const data = await fetchDataWrapper('get-users');
-                const filteredData = data.filter(entry => entry['user-type'] === 'Administrator');
+                const filteredData = data.filter(entry => entry['user-type'] === 'Administrator' || entry['user-type'] === 'Jail Officer');
                 setOptions(filteredData);
 
                 const currentUserEmail = localStorage.getItem('user-email');

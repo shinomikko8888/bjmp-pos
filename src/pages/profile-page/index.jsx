@@ -12,7 +12,7 @@ import { startOfToday } from 'date-fns';
 import { barChartData, barChartOptions, chartDataTest, chartOptionsTest, matrixDataTest, matrixOptionsTest } from '../../utils/data-management/chart-data';
 import { LenderModal, PDLGeneralProfile, PaabotCreditors, RecentTransactions } from './components';
 import { ADD_DESCRIPTION, ADD_TITLE, EDIT_DESCRIPTION, EDIT_TITLE } from '../../constants';
-import { SuccessfulActionModal } from '../../components/modals/util-modals';
+import { FingerprintModal, RemoveFingerprintModal, SuccessfulActionModal } from '../../components/modals/util-modals';
 
 export default function Profile() {
   const urlparams = new URLSearchParams(window.location.search);
@@ -21,8 +21,12 @@ export default function Profile() {
   const [pdlData, setPdlData] = useState({});
   const [imageSrc, setImageSrc] = useState(null);
   const [isLenderModalOpen, setLenderModalOpen] = useState(false);
-  const [isSuccessfulActionModalOpen, setSuccessfulActionModalOpen] = useState(false)
+  const [isSuccessfulActionModalOpen, setSuccessfulActionModalOpen] = useState(false);
+  const [isFSuccessfullActionModalOpen, setFSuccessfulActionModalOpen] = useState(false);
+  const [isFingerprintModalOpen, setFingerprintModalOpen] = useState(false);
+  const [isRemoveFingerprintModalOpen, setRemoveFingerprintModalOpen] = useState(false);
   const [lenderModalSubmitted, setLenderModalSubmitted] = useState(false);
+  const [fingerprintModalSubmitted, setFingerprintModalSubmitted] = useState(false);
   const [creditorId, setCreditorId] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const [primaryKey, setPrimaryKey] = useState('');
@@ -30,46 +34,17 @@ export default function Profile() {
     view: false,
     add: false,
     edit: false,
-  })
+  }) 
+  const [cardData, setCardData] = useState({})
+
+
   useEffect(() => {
     fetchData();
-  }, [id]);
-  function generateDataMonth() {
-    const adapter = new _adapters._date();
-    const data = [];
-    let dt = adapter.startOf(new Date(), 'month');
-    const end = adapter.endOf(dt, 'month');
-    while (dt <= end) {
-      const iso = adapter.format(dt, 'yyyy-MM-dd');
-      data.push({
-        x: isoDayOfWeek(dt),
-        y: iso,
-        d: iso,
-        v: Math.random() * 50
-      });
-      dt = new Date(dt.setDate(dt.getDate() + 1));
-    }
-    return data;
-  }
-  function generateDataYear() {
-    const data = [];
-    const end = startOfToday();
-    let dt = new Date(new Date().setDate(end.getDate() - 365));
-    while (dt <= end) {
-      const iso = dt.toISOString().substr(0, 10);
-      data.push({
-        x: iso,
-        y: isoDayOfWeek(dt),
-        d: iso,
-        v: Math.random() * 50
-      });
-      dt = new Date(dt.setDate(dt.getDate() + 1));
-    }
-    return data;
-  }
+  }, [pk]);
+  
   const fetchData = async () => {
     try {
-      let params = [['id', id]];
+      let params = [['id', pk], ['fw', 'profile'], ];
       const bjmpBranch = localStorage.getItem('bjmp-branch');
       if (bjmpBranch !== 'BJMPRO-III Main Office') {
           params.push(['br', bjmpBranch]);
@@ -78,6 +53,10 @@ export default function Profile() {
       const userImage = data['pdl-image'] ? data['pdl-image'].replace('../api/files/images/pdls/', '') : '';
       setPdlData(data);
       setImageSrc(userImage);
+      const cData = await fetchDataWrapper('get-details', params);
+      setCardData(cData);
+
+
     } catch (error) {
       console.error('Error fetching data: ', error);
     }
@@ -95,22 +74,26 @@ export default function Profile() {
         color: 'yellow-card profile-height',
         icon: 'fa-solid fa-receipt fa-3x',
         name: 'Total Transactions',
-        data: 'Nothing yet...',
-        type: 'single'
+        data: cardData['pdl-total-transactions'] ? cardData['pdl-total-transactions'] : 'XX' ,
+        type: 'single',
+        noSelector: true
+        
     },
     {
         color: 'red-card profile-height',
         icon: 'fa-solid fa-box fa-3x',
         name: 'Favorite Product',
-        data: 'Nothing yet...',
-        type: 'single'
+        data: cardData['favorite-product'] ? cardData['favorite-product'].name : 'XXXXXXX' ,
+        type: 'single',
+        noSelector: true
     },
     {
         color: 'green-card profile-height',
         icon: 'fa-solid fa-circle-dollar-to-slot fa-3x',
         name: 'Amount Spent',
-        data: 'Nothing yet...',
-        type: 'single'
+        data: cardData['amount-spent'] ? `₱${parseFloat(cardData['amount-spent']).toFixed(2)}` : '₱XX.XX',
+        type: 'single',
+        noSelector: true
     },
 ]
 const chartData = [
@@ -121,7 +104,8 @@ const chartData = [
       chartType: 'matrix',
       chartSelector: [{
         isDate: true,
-      }]
+      }],
+      chartColor: '#449600'
     },
     {   
       chartCtx: 'productOverview',
@@ -138,6 +122,11 @@ const chartData = [
     title: `Creditor ${modifyControl.edit ? EDIT_TITLE : modifyControl.add ? ADD_TITLE : ''}`,
     description: `Creditor ${modifyControl.edit ? EDIT_DESCRIPTION : modifyControl.add ? ADD_DESCRIPTION : ""}`,
   }
+
+  const fingerprintDetails = {
+    title: `Fingerprint Uploaded`,
+    description: `PDL's Fingerprint has been uploaded!`
+  }
   return (
     <div>
       <Helmet>
@@ -149,7 +138,8 @@ const chartData = [
       <hr></hr>
       <div className='row d-flex align-items-start'>
           <div className='col-4'>
-            <PDLGeneralProfile data={pdlData} imageSrc={imageSrc}/>
+            <PDLGeneralProfile data={pdlData} imageSrc={imageSrc} setFingerprintModalOpen={() => setFingerprintModalOpen((prev) => !prev)}
+              setRemoveFingerprintModalOpen={() => setRemoveFingerprintModalOpen((prev) => !prev)}/>
           </div>
           <div className='col-8'>
             <div className='row'>
@@ -175,19 +165,25 @@ const chartData = [
       <hr></hr>
       <div className='row d-flex align-items-start'>
         <div className='col-6'>
-            <RecentTransactions branchLocation={pdlData['pdl-branch-location']} pid={id}/>
+            <RecentTransactions branchLocation={pdlData['pdl-branch-location']} pid={pk}/>
         </div>
         <div className='col-6'>
             <PaabotCreditors openLenderModal={() => setLenderModalOpen((prev) => !prev)} modifyControl={modifyControl} setModifyControl={setModifyControl}
-             pid={id} branchLocation={pdlData['pdl-branch-location']} isSuccessfulActionModalOpen={isSuccessfulActionModalOpen} setCreditorId={setCreditorId}
+             pid={pk} branchLocation={pdlData['pdl-branch-location']} isSuccessfulActionModalOpen={isSuccessfulActionModalOpen} setCreditorId={setCreditorId}
              setSelectedRows={setSelectedRows} isSubmitted={lenderModalSubmitted}/>
         </div>
       </div>
       <LenderModal stateChecker={isLenderModalOpen} stateControl={() => setLenderModalOpen((prev) => !prev)} modifyControl={modifyControl}
-      isSubmittedControl={() => setLenderModalSubmitted((prev) => !prev)} pid={id} branchLocation={pdlData['pdl-branch-location']} id={creditorId}/>
+      isSubmittedControl={() => setLenderModalSubmitted((prev) => !prev)} pid={pk} branchLocation={pdlData['pdl-branch-location']} id={creditorId}/>
       <SuccessfulActionModal stateChecker={isSuccessfulActionModalOpen} stateControl={() => setSuccessfulActionModalOpen((prev) => !prev)}
       isSubmitted={lenderModalSubmitted} isSubmittedControl={() => setLenderModalSubmitted((prev) => !prev)} actionTitle={submissionDetails.title} 
       actionDescription={submissionDetails.description}/>
+      <SuccessfulActionModal stateChecker={isFSuccessfullActionModalOpen} stateControl={() => setFSuccessfulActionModalOpen((prev) => !prev)}
+      isSubmitted={fingerprintModalSubmitted} isSubmittedControl={() => setFingerprintModalSubmitted((prev) => !prev)} actionTitle={fingerprintDetails.title} 
+      actionDescription={fingerprintDetails.description}/>
+      <FingerprintModal stateChecker={isFingerprintModalOpen} stateControl={() => setFingerprintModalOpen()} type="create" pdlData={pdlData}
+      isSubmittedControl={() => setFingerprintModalSubmitted()} isSubmitted={fingerprintModalSubmitted} fetchData={() => fetchData()} />
+      <RemoveFingerprintModal stateChecker={isRemoveFingerprintModalOpen} stateControl={() => setRemoveFingerprintModalOpen()} pid={pk} fetchData={() => fetchData()} />
     </div>
   );
 }

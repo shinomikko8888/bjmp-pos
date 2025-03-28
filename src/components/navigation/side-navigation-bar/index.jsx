@@ -5,7 +5,7 @@ import BJMPLogo from '../../../assets/png/bjmp-logo.png'
 import { useState, useEffect } from 'react';
 import { LogoutModal, SettingsModal } from './modals';
 
-export default function SideNavigationBar({isSidebarOpen, toggleSidebar}){
+export default function SideNavigationBar({isSidebarOpen, toggleSidebar, userType}){
     const [content, setContent] = useState('');
     useEffect(() => {
         const handleResize = () => {
@@ -31,6 +31,20 @@ export default function SideNavigationBar({isSidebarOpen, toggleSidebar}){
     
     const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
     const [isSettingModalOpen, setSettingModalOpen] = useState(false); 
+
+    const filterNavigationButtons = (buttons, userType) => {
+        return buttons.filter(button => {
+            if (userType === 'Administrator') {
+                return true; // Show all buttons
+            } else if (userType === 'Jail Officer') {
+                return button.path !== '/pos' && button.path !== '/users';
+            } else if (userType === 'Concessionaire Officer') {
+                return button.path === '/pos' || button.type === 'Modal';
+            } else {
+                return false; // For other user types, or default case, show no buttons
+            }
+        });
+    };
     const dashboardNavigationButtons = [
         //Main Dashboard Navigation
         {   
@@ -91,8 +105,9 @@ export default function SideNavigationBar({isSidebarOpen, toggleSidebar}){
             name: 'Logout',
         },
     ]
-    const mainButtons = dashboardNavigationButtons.filter(button => button.type === 'Main');
-    const modalButtons = dashboardNavigationButtons.filter(button => button.type === 'Modal');
+    const filteredButtons = filterNavigationButtons(dashboardNavigationButtons, userType);
+    const mainButtons = filteredButtons.filter(button => button.type === 'Main');
+    const modalButtons = filteredButtons.filter(button => button.type === 'Modal');
 
     
     return(
@@ -116,8 +131,10 @@ export default function SideNavigationBar({isSidebarOpen, toggleSidebar}){
             </div>
         </ul>
         </div>
-        <SettingsModal stateChecker={isSettingModalOpen} stateControl={() => setSettingModalOpen((prev) => !prev)}/>
+        <SettingsModal stateChecker={isSettingModalOpen} 
+        stateControl={() => setSettingModalOpen((prev) => !prev)}  />
         <LogoutModal stateChecker={isLogoutModalOpen} stateControl={() => setLogoutModalOpen((prev) => !prev)}/>
+        
         </>
     );
 

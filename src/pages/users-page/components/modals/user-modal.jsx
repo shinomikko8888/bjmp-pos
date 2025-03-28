@@ -9,6 +9,7 @@ export default function UserModal(props){
     const [imageSrc, setImageSrc] = useState(null);
     const [tempImageSrc, setTempImageSrc] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [buttonState, setButtonState] = useState(false);
     const fileInputRef = useRef(null);
     const handleSvgClick = () => {
         if (fileInputRef.current) {
@@ -125,22 +126,28 @@ export default function UserModal(props){
 
     const handleSubmit = async (event) => {
         try {
+            
             if (!isFormDataValid(formData)) {
                 setErrorMessage('Please fill in all required fields');
                 return;
+            } else {
+                setButtonState(true)
+                const response = await handleSubmitWrapper(event, formData, true);
+                if (response.success) {
+                    setErrorMessage('');
+                    stateControl((prev) => !prev)
+                    isSubmittedControl((prev) => !prev)
+                    setButtonState(false);
+                } else {
+                setErrorMessage(response.message || "System error"); 
+                setButtonState(false);
+                }
             }
             
-            const response = await handleSubmitWrapper(event, formData, true);
-            if (response.success) {
-                setErrorMessage('');
-                stateControl((prev) => !prev)
-                isSubmittedControl((prev) => !prev)
-            } else {
-              setErrorMessage(response.message || "System error"); 
-            }
           } catch (error) {
             console.error('Error: ', error);
             setErrorMessage(`Error: ${error}`);
+            setButtonState(false);
           }
     }
 
@@ -255,7 +262,7 @@ export default function UserModal(props){
             </div>
             <div className="row g-3 align-items-center">
                     <div className="col-6">
-                        <label htmlFor="user-branch-location" className="col-form-label">BJMP Branch Location:<span className='form-required'>*</span></label>
+                        <label htmlFor="user-branch-location" className="col-form-label">BJMP Unit Location:<span className='form-required'>*</span></label>
                         <select
                             name="user-branch-location"
                             id="user-branch-location"
@@ -306,10 +313,10 @@ export default function UserModal(props){
                 <button type="button" className="link-btn" onClick={() => {
                     stateControl((prev) => !prev)
                     
-                    }}>
+                    }} disabled={buttonState}>
                     Discard
                     </button>
-                <button type="button" className="main-btn" onClick={handleSubmit}>Submit</button>
+                <button type="button" className="main-btn" onClick={handleSubmit} disabled={buttonState}>Submit</button>
             </div>
             
         </>

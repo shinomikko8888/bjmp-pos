@@ -5,7 +5,6 @@ export const REASONS = [
             {
                 type: 'User',
                 reasons: [
-                    'Disabled account.',
                     'Inactive account.',
                     'Suspicious activity.',
                     'Violation of BJMP protocols.',

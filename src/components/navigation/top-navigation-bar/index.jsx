@@ -45,6 +45,7 @@ export default function TopNavigationBar({isSidebarOpen, toggleSidebar}){
             stateChecker={isUserProfileModalOpen} 
             stateControl={() => setUserProfileModalOpen((prev) => !prev)} 
             userData={userData}
-            imageSrc={imageSrc} />
+            imageSrc={imageSrc} 
+            fetchOuterData={fetchData}/>
     </>);
 }

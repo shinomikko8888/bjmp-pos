@@ -15,6 +15,7 @@ export default function DeleteModal (props) {
         prim: prim || '',
       })
     const [errorMessage, setErrorMessage] = useState('');
+    const [buttonState, setButtonState] = useState(false);
     const filteredReasons = REASONS.filter(branch => branch.action === 'Delete')[0]?.content.filter(contentItem => contentItem.type === type)[0]?.reasons || [];
     useEffect(() => {
         setDeleteValue(
@@ -45,14 +46,19 @@ export default function DeleteModal (props) {
           setErrorMessage('Please set a reason for deleting!');
         else{
           setErrorMessage('');
+          setButtonState(true);
           try{
             const response = await handleSubmitWrapper(event, deleteValue, true);
             if (response.success) {
                 stateControl((prev) => !prev)
                 isSubmittedControl((prev) => !prev)
+                setButtonState(false);
+            } else {
+              setButtonState(false);
             }
           } catch (error) {
             console.error('Error: ', error);
+            setButtonState(false);
           }
         }
     }
@@ -95,6 +101,7 @@ export default function DeleteModal (props) {
             type="button"
             className='link-btn mx-2'
             onClick={() => stateControl((prev) => !prev)}
+            disabled={buttonState}
           >
             Cancel
           </button>
@@ -102,6 +109,7 @@ export default function DeleteModal (props) {
             type="button"
             className='main-btn'
             onClick={handleSubmit}
+            disabled={buttonState}
           >
             Proceed
           </button>

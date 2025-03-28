@@ -23,7 +23,12 @@ export default function LoginFormLayout(){
           localStorage.setItem('login-token', response.user.login_token)
           localStorage.setItem('user-email', response.user.email)
           localStorage.setItem('bjmp-branch', response.user.bjmp_branch)
-          navigate('/dashboard');
+          if(response.user.type === 'Concessionaire Officer'){
+            navigate('/pos');
+          } else {
+            navigate('/dashboard');
+          }
+          
         } else {
           setErrorMessage(response.message || "Login failed"); 
         }

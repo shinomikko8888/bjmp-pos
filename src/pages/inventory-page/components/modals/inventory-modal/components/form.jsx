@@ -1,25 +1,41 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { handleChangeWrapper } from "../../../../../../utils";
 
 export default function InventoryForm(props){
     const {itemData, stateChecker, isView, formData, setFormData, formattedDate, formattedTime} = props
+    const [isExpirationDate, setExpirationDate] = useState(false);
     useEffect(() => {
-        setFormData({
-            'instance-type': itemData['item-type'] || '',
-            'instance-name': itemData['item-name'] || '',
+        if (!isExpirationDate) {
+            // When the expiration date is disabled, set it to null
+            setFormData((prevData) => ({
+                ...prevData,
+                'instance-expiration-date': null,
+            }));
+        } else {
+            setFormData((prevData) => ({
+                ...prevData,
+                'instance-expiration-date': formData['instance-expiration-date'] || '', // Use existing value or set to an empty string
+            }));
+        }
+
+        // Set other form fields
+        setFormData((prevData) => ({
+            ...prevData,
+            'instance-item-pk': itemData['pk'] || '',
             'instance-date-time': `${formattedDate} ${formattedTime}`,
-            'instance-expiration-date': '',
             'instance-remaining-stock': '',
             'action': 'add-instance',
             'active-email': localStorage.getItem('user-email'),
             'instance-branch-location': itemData['item-branch-location'] || '',
-        })
-    }, [stateChecker, isView, itemData])
+        }));
+    }, [stateChecker, isView, itemData, isExpirationDate, formattedDate, formattedTime]);
+
 
 
 
     const handleChange = async (event) => {
         await handleChangeWrapper(event, formData, setFormData);
+        console.log(formData)
     }
     return(
         <>
@@ -57,7 +73,7 @@ export default function InventoryForm(props){
                         </div>
                     </div>
                     <div className="row g-2 align-items-center mb-1">
-                        <div className="col-12">
+                        <div className="col-11">
                         <label htmlFor="instance-expiration-date" className="col-form-label">
                             Expiration Date:
                         </label>
@@ -70,7 +86,14 @@ export default function InventoryForm(props){
                             min={formattedDate}
                             value={formData['instance-expiration-date'] || ''}
                             onChange={handleChange}
+                            disabled={isExpirationDate}
                         />
+                        </div>
+                        <div className="col-1">
+                            <button type="button" className="toggle-form-button" onClick={() => setExpirationDate((prev) => !prev)}> 
+                                <p className="icon-hover m-0 item-modal-field-state-button" style={{transform: isExpirationDate ? '' : 'rotate(45deg)'}}>+</p>
+                                <span className='icon-tooltip'>{!isExpirationDate ? 'No Expiration Date' : 'Expiration Date Available'}</span>
+                            </button>  
                         </div>
                     </div>
                     <div className="row g-2 align-items-center mb-1">

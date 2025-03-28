@@ -8,28 +8,37 @@ import { MONTHS } from "../../../constants";
 
 
 
-//For Testing
-export const barChartData = () => {
-    return{
-        labels: ["January", "February", "March", "April", "May"],
-        datasets: [
-            {
-                label: "Sales",
-                backgroundColor: "rgba(54, 162, 235, 0.2)",
-                borderColor: "rgba(54, 162, 235, 1)",
-                borderWidth: 1,
-                data: [450, 520, 610, 590, 710],
-            },
-            {
-                label: "Expenses",
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
-                borderColor: "rgba(255, 99, 132, 1)",
-                borderWidth: 1,
-                data: [320, 390, 450, 410, 480],
-            }
-        ]
-    }
-}
+export const barChartData = (data) => {
+  // Check if data is defined and is an array
+  if (!Array.isArray(data) || data.length === 0) {
+      return {
+          labels: [],
+          datasets: []
+      };
+  }
+
+  // Sort the data by sales in descending order
+  data.sort((a, b) => b.sales - a.sales);
+
+  // Extract products and sales from the sorted data
+  const products = data.map(item => item.product);
+  const sales = data.map(item => item.sales);
+
+  return {
+      labels: products,
+      datasets: [
+          {
+              label: "Sales",
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
+              data: sales,
+          }
+      ]
+  };
+};
+
+
 
 export const barChartOptions = () => {
     return {

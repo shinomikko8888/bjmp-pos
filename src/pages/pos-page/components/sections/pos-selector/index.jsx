@@ -5,13 +5,13 @@ import PosButtons from "./buttons";
 import { fetchDataWrapper } from "../../../../../utils";
 import { Pagination } from "../../../../../components";
 export default function PosSelector(props){
-    const {fetchCommodityData, commodityData, setErrorMessage} = props
+    const {fetchCommodityData, commodityData, setErrorMessage, isSubmitted} = props
     const [buttonData, setButtonData] = useState([]);
     const [activeButton, setActiveButton] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     useEffect(() => {
         fetchData();
-    }, [])
+    }, [isSubmitted])
 
     const fetchData = async () => {
         let params = []
@@ -44,8 +44,8 @@ export default function PosSelector(props){
         <>
             <div className='mx-2 pos-selector'>
                 {currentData.map(data => (
-                    <PosButtons key={data.pk} 
-                    data={data} isActive={activeButton == data.pk} 
+                    <PosButtons key={data.dbpk} 
+                    data={data} isActive={activeButton == data.dbpk} 
                     setActiveButton={setActiveButton} fetchCommodityData={fetchCommodityData}
                     commodityData={commodityData} setErrorMessage={setErrorMessage}/>
                 ))}

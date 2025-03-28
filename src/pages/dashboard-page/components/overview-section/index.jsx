@@ -60,7 +60,7 @@ export default function OverviewSection(props){
           chartSelector: [{
             isDate: true,
           }],
-          chartColor: 'blue'
+          chartColor: '#10069f'
       },
       {   
         chartCtx: 'totalTransac',
@@ -70,7 +70,7 @@ export default function OverviewSection(props){
         chartSelector: [{
             isDate: true,
         }],
-        chartColor: 'red'
+        chartColor: '#e4002b'
 
     },
     ];

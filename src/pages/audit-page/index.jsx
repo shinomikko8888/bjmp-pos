@@ -164,7 +164,7 @@ export default function Audit() {
         },
         {
           headerId: 'bjmpBranch',
-          headerName: 'BJMP Branch',
+          headerName: 'BJMP Unit',
           hasFilter: true,
           hasLowHigh: false,
         },

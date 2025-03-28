@@ -5,9 +5,10 @@ import { handleChangeWrapper, handleSubmitWrapper } from "../../../utils";
 import { REASONS } from "../../../constants/reasons";
 
 export default function RetrieveModal (props) {
-    const {stateChecker, stateControl, type, method, id, isSubmittedControl, prim, multipleIds} = props
+    const {stateChecker, stateControl, type, method, id, isSubmittedControl, prim, multipleIds, branch} = props
     const [retrieveValue, setRetrieveValue] = useState({
         id: '',
+        branch: '',
         mult: '',
         method: '',
         action: '',
@@ -16,6 +17,8 @@ export default function RetrieveModal (props) {
         user: '',
       })
     const [errorMessage, setErrorMessage] = useState('');
+    const [buttonState, setButtonState] = useState(false);
+   
     const filteredReasons = REASONS.filter(branch => branch.action === 'Retrieve')[0]?.content.filter(contentItem => contentItem.type === type)[0]?.reasons || [];
       useEffect(() => {
         setRetrieveValue(
@@ -25,18 +28,18 @@ export default function RetrieveModal (props) {
           }
         )
       }, [stateChecker]);
-  
       useEffect(() => {
         setRetrieveValue({
           ...retrieveValue,
           id: id && id,
+          branch: branch && branch,
           mult: multipleIds && multipleIds ,
           method: method && method.toLowerCase(),
           action: type && `retrieve-${type.toLowerCase()}`,
           prim: prim && prim,
           user: localStorage.getItem('user-email'),
         })
-      }, [type, method, id] )
+      }, [type, method, id, prim] )
 
       const handleChange = async (event) => {
         await handleChangeWrapper(event, retrieveValue, setRetrieveValue);
@@ -47,13 +50,18 @@ export default function RetrieveModal (props) {
           setErrorMessage('Please set a reason for retrieval!');
         else{
           try{
+            setButtonState(true);
             const response = await handleSubmitWrapper(event, retrieveValue, true);
             if (response.success) {
                 stateControl((prev) => !prev)
                 isSubmittedControl((prev) => !prev)
+                setButtonState(false);
+            } else {
+              setButtonState(false);
             }
           } catch (error) {
             console.error('Error: ', error);
+            setButtonState(false);
           }
         }
         
@@ -96,6 +104,7 @@ export default function RetrieveModal (props) {
             type="button"
             className='link-btn mx-2'
             onClick={() => stateControl((prev) => !prev)}
+            disabled={buttonState}
           >
             Cancel
           </button>
@@ -103,6 +112,7 @@ export default function RetrieveModal (props) {
             type="button"
             className='main-btn'
             onClick={handleSubmit}
+            disabled={buttonState}
           >
             Proceed
           </button>

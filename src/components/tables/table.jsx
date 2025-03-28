@@ -38,7 +38,7 @@ export default function TableTemplate(props){
 
       const filteredAndSortedData = useMemo(() => {
         let filteredAndSortedTableData = [...tableData.tableData];
-      
+    
         // Apply filtering
         Object.keys(filters).forEach((headerId) => {
             const value = filters[headerId];
@@ -48,20 +48,20 @@ export default function TableTemplate(props){
                         row[headerId].includes(value)
                     );
                 } else if (headerId === "changelogDateAndTime" || headerId === "transactionDateAndTime") {
-                  const [startDateString, endDateString] = value.split(' - ');
-
-                  // Convert date strings to Date objects
-                  const startDate = new Date(startDateString.trim());
-                  const endDate = new Date(endDateString.trim());
-
-                  // Adjust endDate to include the whole day
-                  endDate.setDate(endDate.getDate());
-
-                  filteredAndSortedTableData = filteredAndSortedTableData.filter((row) => {
-                      const rowDate = new Date(row[headerId]);
-                      return rowDate > startDate && rowDate < endDate;
-                  });
-              } else {
+                    const [startDateString, endDateString] = value.split(' - ');
+    
+                    // Convert date strings to Date objects
+                    const startDate = new Date(startDateString.trim());
+                    const endDate = new Date(endDateString.trim());
+    
+                    // Adjust endDate to include the whole day
+                    endDate.setDate(endDate.getDate() + 1);
+    
+                    filteredAndSortedTableData = filteredAndSortedTableData.filter((row) => {
+                        const rowDate = new Date(row[headerId]);
+                        return rowDate >= startDate && rowDate < endDate;
+                    });
+                } else {
                     filteredAndSortedTableData = filteredAndSortedTableData.filter((row) =>
                         row[headerId].toLowerCase().includes(value.toLowerCase())
                     );
@@ -70,7 +70,7 @@ export default function TableTemplate(props){
         });
     
         filteredAndSortedTableData = filteredAndSortedTableData.filter(row => row.isArchived !== archived);
-        
+    
         // Apply sorting if sortConfig is defined
         if (sortConfig) {
             filteredAndSortedTableData.sort((a, b) => {
@@ -79,7 +79,6 @@ export default function TableTemplate(props){
     
                 // Check for specific headers
                 if (sortConfig.key === 'balance' || sortConfig.key === 'price') {
-                  
                     aValue = parseFloat(aValue);
                     bValue = parseFloat(bValue);
                     
@@ -114,12 +113,19 @@ export default function TableTemplate(props){
                 if (aValue > bValue) {
                     return sortConfig.direction === "ascending" ? 1 : -1;
                 }
+    
+                if (sortConfig.key === 'id' && aValue === bValue) {
+                    let aSecondary = a['bjmpBranch'].toLowerCase();
+                    let bSecondary = b['bjmpBranch'].toLowerCase();
+                    return sortConfig.direction === "ascending" ? (aSecondary < bSecondary ? -1 : 1) : (aSecondary > bSecondary ? -1 : 1);
+                }
+    
                 return 0;
             });
         }
         
         return filteredAndSortedTableData;
-    }, [tableData.tableData, filters, sortConfig]);
+    }, [tableData.tableData, filters, sortConfig, archived]);
     
     
     const totalPages = Math.ceil(filteredAndSortedData.length / rowsPerPage);
@@ -145,7 +151,6 @@ export default function TableTemplate(props){
 
     return (
         <div className="pagination-container">
-            
             <ul className="pagination m-0">
                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                     <button 
@@ -334,13 +339,13 @@ export default function TableTemplate(props){
                     onClick={() => handleButtonClick(button.buttonFunctionality)}
                 >
                     <i className={`fa-regular ${button.buttonIcon} icon-hover`}></i>
-                    <span className='icon-tooltip'>{button.buttonName}</span>
+                    <span className='icon-tooltip' onClick={(event) => event.stopPropagation()} >{button.buttonName}</span>
                 </button>
             );
         }).filter(Boolean);
     };
     
-    const generateActions = (actions, archived, unselectable, returnData=null, dbpkData=null, transactionReceiptLink=null, transactionType=null) => {
+    const generateActions = (actions, archived, unselectable, returnData=null, dbpkData=null, transactionReceiptLink=null, transactionType=null, bjmpBranch=null) => {
       const filteredActions = actions.filter(action => 
         action.forArchive !== archived && 
         !(unselectable && (action.actionName === 'Archive' || action.actionName === 'Edit'))
@@ -349,9 +354,9 @@ export default function TableTemplate(props){
             <p key={index} onClick={() => {
               if (returnData !== null) {
                 if (transactionReceiptLink !== null || transactionType !== null){
-                  action.actionFunctionality.function(returnData, dbpkData, transactionReceiptLink, transactionType)
+                  action.actionFunctionality.function(returnData, dbpkData, transactionReceiptLink, transactionType, bjmpBranch)
                 } else {
-                  action.actionFunctionality.function(returnData, dbpkData);
+                  action.actionFunctionality.function(returnData, dbpkData, bjmpBranch);
                 }
               } 
               else {
@@ -364,14 +369,14 @@ export default function TableTemplate(props){
           ));
       };
       
-      const handleRowClick = (pk, unselectable=false, dbpk, ) => {
+      const handleRowClick = (pk, unselectable=false, dbpk, bjmpBranch) => {
         if (isMultipleSelectionEnabled && pk && !unselectable) { 
             setSelectedRows((prevSelectedRows) => {
               const isSelected = prevSelectedRows.some((row) => row.pk === pk);
               if (isSelected) {
                   return prevSelectedRows.filter((row) => row.pk !== pk);
               } else {
-                  return [...prevSelectedRows, { pk, dbpk }];
+                  return [...prevSelectedRows, { pk, dbpk, bjmpBranch }];
               }
           });
           setRows((prevSelectedRows) => {
@@ -379,7 +384,7 @@ export default function TableTemplate(props){
             if (isSelected) {
                 return prevSelectedRows.filter((row) => row.pk !== pk);
             } else {
-                return [...prevSelectedRows, { pk, dbpk }];
+                return [...prevSelectedRows, { pk, dbpk, bjmpBranch }];
             }
         });
         }
@@ -415,8 +420,9 @@ export default function TableTemplate(props){
         const rowClass = isMultipleSelectionEnabled && hasData && isSelected ? "selected-row" : "";
         const transactionReceiptLink = rowData.transactionReceiptLink ? rowData.transactionReceiptLink : null;
         const transactionType = rowData.transactionType ? rowData.transactionType : null;
+        const bjmpBranch = rowData.bjmpBranch ? rowData.bjmpBranch : null;
         return (
-          <tr key={rowData.pk} onClick={() => handleRowClick(rowData.pk, rowData.unselectable, rowPrimaryKey)} className={`${isEven ? "zebra-even" : "zebra-odd"} ${rowClass}`} 
+          <tr key={rowData.dbpk} onClick={() => handleRowClick(rowData.pk, rowData.unselectable, rowPrimaryKey, bjmpBranch)} className={`${isEven ? "zebra-even" : "zebra-odd"} ${rowClass}`} 
           style={{ cursor: isMultipleSelectionEnabled && hasData && !rowData.unselectable ? 'pointer' : 'default', 
             }}>
             {hasData && isMultipleSelectionEnabled && (
@@ -450,7 +456,7 @@ export default function TableTemplate(props){
                       <div key={i} style={{ padding: "10px", fontSize: "12px" }} className={`type-cell ${getCellStyleForType(type)}`}>
                       </div>
                     ))}</div>
-                    : (header.headerId === "balance" || header.headerId === "price" || header.headerId === 'transactionAmount') && hasData && rowData[header.headerId]
+                    : (header.headerId === "balance" || header.headerId === "price" || header.headerId === 'transactionAmount' || header.headerId === 'spendingTotal') && hasData && rowData[header.headerId]
                     ? `₱${rowData[header.headerId]}`
                     : header.headerId === "status" && rowData[header.headerId] ? 
                     <div className="d-flex">
@@ -474,10 +480,10 @@ export default function TableTemplate(props){
             )})}
             {hasData && tableData.tableActions && !isMultipleSelectionEnabled && tableData.tableActions.length > 0 && (
               <td className="action-buttons" style={{ padding: paddingStyle }}>
-                {generateActions(tableData.tableActions, archived, rowData.unselectable, rowData.pk, rowPrimaryKey, transactionReceiptLink, transactionType)}
+                {generateActions(tableData.tableActions, archived, rowData.unselectable, rowData.pk, rowPrimaryKey, transactionReceiptLink, transactionType, bjmpBranch)}
               </td>
             )}
-            {!hasData && <td style={{ padding: paddingStyle }}></td>}
+            {!hasData && tableData.tableActions.length > 0 && <td style={{ padding: paddingStyle }}></td>}
           </tr>
         );
       });

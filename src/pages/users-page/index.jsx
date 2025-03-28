@@ -90,7 +90,7 @@ export default function User() {
         },
         {
           headerId: 'bjmpBranch',
-          headerName: 'BJMP Branch',
+          headerName: 'BJMP Unit',
           hasFilter: true,
           hasLowHigh: false,
         },

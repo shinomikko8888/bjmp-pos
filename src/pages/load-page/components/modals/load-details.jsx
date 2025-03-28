@@ -7,7 +7,7 @@ export default function LoadDetails(props){
     const {stateControl, stateChecker, loadData, setLoadData, isSubmitted, isSubmittedControl, setResultValue} = props
     const [confirmChecked, setConfirmChecked] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-
+    const [buttonState, setButtonState] = useState(false);
     
     const handleChange = async (event) => {
         await handleChangeWrapper(event, loadData, setLoadData)
@@ -18,19 +18,25 @@ export default function LoadDetails(props){
 
     const handleSubmit = async (event) => {
         try {
+            
             if (confirmChecked) {
+                setButtonState(true);
                 const response = await handleSubmitWrapper(event, loadData);
                 if(response.success){
                     setResultValue(`${(loadData['pdl-data'] && loadData['load-amount']) && ((parseFloat(loadData['load-amount']) + parseFloat(loadData['pdl-data']['pdl-balance'])).toFixed(2)) }`);
                     stateControl((prev) => !prev)
                     isSubmittedControl((prev) => !prev)
+                    setButtonState(false);
                     window.open(`${DOMAIN}/files/docs/receipts/load/${response.filepath}`, '_blank');
                 }
             } else {
                 setErrorMessage('Please check the terms before submitting')
+                setButtonState(false);
             }
         } catch (error) {
             console.error('Error: ', error);
+            setErrorMessage('Error: ', error);
+            setButtonState(false);
         }
         
     }
@@ -87,10 +93,10 @@ export default function LoadDetails(props){
         <>
             <div className="d-flex justify-content-end">
                 <p className="error-message mx-3">{errorMessage}</p>
-                <button type="button" className="link-btn" onClick={() => stateControl((prev) => !prev)}>
+                <button type="button" className="link-btn" onClick={() => stateControl((prev) => !prev)} disabled={buttonState}>
                     Discard
                     </button>
-                <button type="button" className="main-btn" onClick={handleSubmit} disabled={!confirmChecked}>Submit</button>
+                <button type="button" className="main-btn" onClick={handleSubmit} disabled={!confirmChecked || buttonState}>Submit</button>
             </div>
         </>
     )

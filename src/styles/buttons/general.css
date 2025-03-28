@@ -9,8 +9,25 @@
     transition: all 0.2s ease-in-out;
   }
 
+.main-btn-red {
+    background-color: #ff3333;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    color: white;
+    transition: all 0.2s ease-in-out;
+}
+
 .main-btn:hover{
     background-color: #777777;
+}
+.main-btn:disabled{
+    background-color: #d1d1d1;
+    color: black;
+}
+.main-btn-red:hover {
+    background-color: #c52222;
+
 }
 
 .link-btn{

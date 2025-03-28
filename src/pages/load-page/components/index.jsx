@@ -34,7 +34,12 @@ export default function LoadForm(){
     }, [isSubmitted])
     const fetchData =  async () => {
         try{
-            const rawData = await fetchDataWrapper('get-pdls');
+            let params = []
+            const bjmpBranch = localStorage.getItem('bjmp-branch');
+                if (bjmpBranch !== 'BJMPRO-III Main Office') {
+                    params.push(['br', bjmpBranch]);
+                }
+            const rawData = await fetchDataWrapper('get-pdls', params);
             const transformedData = rawData.map((data) => ({
                 dbpk: data['pk'],
                 pk: data['pdl-id'],
@@ -65,6 +70,7 @@ export default function LoadForm(){
                     firstError: '',
                     secondError: '',
                 });
+                console.log(loadData)
             } else {
                 setErrorMessages({
                     ...errorMessages,
@@ -113,7 +119,7 @@ export default function LoadForm(){
                 },
                 {
                   headerId: 'bjmpBranch',
-                  headerName: 'BJMP Branch',
+                  headerName: 'BJMP Unit',
                   hasFilter: true,
                   hasLowHigh: false,
                 },

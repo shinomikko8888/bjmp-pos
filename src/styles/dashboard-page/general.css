@@ -70,3 +70,79 @@ body{
     border: 1px solid #ccc;
     text-align: left;
 }
+
+.list-none{
+    list-style: none;
+    font-size: 11px;
+}
+
+.patch-notes-block{
+    max-height: 150px;
+    overflow-y: scroll;
+}
+
+.fingerprint-icon, .fingerprint-icon-scanning,
+.fingerprint-icon-success, .fingerprint-icon-error{
+    color: white;
+    padding: 15px;
+    border-radius: 50%;
+    font-size: 40px;
+    transition: 0.3s all ease-in-out;
+    cursor: pointer;
+}
+
+.fingerprint-icon{
+    background-color: black;
+}
+
+.fingerprint-icon-scanning{
+    background-color: #21008f;
+    animation: bounce 1s infinite;
+}
+
+.fingerprint-icon-success{
+    background-color: #00b800;
+}
+
+.fingerprint-icon-error{
+    background-color: red;
+}
+
+.fingerprint-icon:hover,
+.fingerprint-icon-scanning:hover,
+.fingerprint-icon-success:hover,
+.fingerprint-icon-error:hover{
+    transform: scale(1.15);
+}
+.fingerprint-icon::after, .fingerprint-icon-scanning::after,
+.fingerprint-icon-success::after, .fingerprint-icon-error::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.2); /* Light color overlay */
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fingerprint-icon:hover::after,
+.fingerprint-icon-scanning:hover::after,
+.fingerprint-icon-success:hover::after,
+.fingerprint-icon-error:hover::after {
+    opacity: 1;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.1);
+    }
+    60% {
+        transform: scale(1.05);
+    }
+}

@@ -7,7 +7,8 @@ import { ADD_DESCRIPTION, ADD_TITLE,
     EDIT_DESCRIPTION, EDIT_TITLE, 
     RETRIEVE_DESCRIPTION, RETRIEVE_TITLE } from "./successful-action-text";
 
-const DOMAIN = 'http://localhost:80/bjmppos/api/';
+//const DOMAIN = 'http://localhost:80/bjmppos/api/' ;
+const DOMAIN = 'https://bjmpro3pos.com/api/' ;
 const SECUGEN = 'https://localhost:8443/';
 const TABLE_BIG_CONTENT = 20;
 const TABLE_MEDIUM_CONTENT = 10;

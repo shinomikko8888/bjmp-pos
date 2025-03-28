@@ -18,7 +18,8 @@ export default function InventoryModal(props){
     const [itemId, setItemId] = useState('');
     const [primaryKey, setPrimaryKey] = useState('');
     const [selectedRows, setSelectedRows] = useState([]);
-    ;
+    const [buttonState, setButtonState] = useState(false);
+
     const tabs = [
       { label: "List of Instances", id: "listOfInstances" },
       { label: "Profits", id: "stockProfits" },
@@ -29,11 +30,18 @@ export default function InventoryModal(props){
         setActiveTab(tabs[0].id)
       }, 500)
     }, [stateChecker])
+
     useEffect(() => {
       if(id){
         fetchItemData(); 
       }
     }, [id])
+    useEffect(() => {
+      if (itemData['pk']) {
+        fetchInstanceData();
+      }
+    }, [itemData]);
+
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
@@ -42,14 +50,8 @@ export default function InventoryModal(props){
     const hours = String(currentDate.getHours()).padStart(2, '0');
     const minutes = String(currentDate.getMinutes()).padStart(2, '0');
     const formattedTime = `${hours}:${minutes}`;
-    useEffect(() => {
-      if(id && (activeTab === 'listOfInstances' || activeTab === 'archivedInstances')){
-        fetchInstanceData();
-      }
-    }, [id, activeTab])
     const [formData, setFormData] = useState({
-      'instance-type': '',
-      'instance-name': '',
+      'instance-item-pk': '',
       'instance-date-time': `${formattedDate} ${formattedTime}`,
       'instance-expiration-date': '',
       'instance-remaining-stock': '',
@@ -84,9 +86,8 @@ export default function InventoryModal(props){
             instanceParams.push(['br', bjmpBranch]);
         }
         
-        if(itemData['item-type'] && itemData['item-name']) {
-          instanceParams.push(['it', itemData['item-type']]);
-          instanceParams.push(['in', itemData['item-name']]);
+        if(itemData['pk']) {
+          instanceParams.push(['pk', itemData['pk']]);
           instanceParams.push(['br', itemData['item-branch-location']]);
         }
         const instanceData = await fetchDataWrapper(activeTab === 'listOfInstances' ? 'get-instances' : 'get-archived-instances', instanceParams);
@@ -115,12 +116,15 @@ export default function InventoryModal(props){
               setErrorMessage('');
               stateControl((prev) => !prev)
               isSubmittedControl((prev) => !prev)
+              setButtonState(false);
           } else {
             setErrorMessage(response.message || "System error"); 
+            setButtonState(false);
           }
         } catch (error) {
           console.error('Error: ', error);
           setErrorMessage(`Error: ${error}`);
+          setButtonState(false);
         }
   }
     const instanceTableData = [
@@ -156,23 +160,12 @@ export default function InventoryModal(props){
                 },
                 {
                     headerId: 'bjmpBranch',
-                    headerName: 'BJMP Branch',
+                    headerName: 'BJMP Unit',
                     hasFilter: true,
                     hasLowHigh: false,
                 },
             ],
             buttonsInTable:[
-                {
-                    buttonName: 'Generate Report', //Button Name
-                    buttonIcon: 'fa-regular fa-file', //Button Icon
-                    buttonFunctionality: {
-                      action: 'generateReport',
-                      function: function(){
-                        alert('generateReport')
-                      }
-                    }, //Button Functionality
-                    forArchive: false,
-                  },
                   {
                     buttonName: 'Add Instance Entry',
                     buttonIcon: 'fa-regular fa-plus',
@@ -294,7 +287,7 @@ export default function InventoryModal(props){
                       })()}, {itemData['item-remaining-stock'] || ''}pcs left
                     </label>
                     <label htmlFor="itemBranch" className="col-form-label d-block">
-                      <b>Product Branch Location:</b> {itemData['item-branch-location'] || ''}
+                      <b>Product Unit Location:</b> {itemData['item-branch-location'] || ''}
                     </label>
                 </div>
                 <div className="col-7">
@@ -307,7 +300,7 @@ export default function InventoryModal(props){
                     <>
                     <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
                     {activeTab === 'stockProfits' && (<div>
-                      <ProfitTab/>
+                      <ProfitTab idFromProps={id}/>
                     </div>)}
                     {(activeTab === 'listOfInstances' || activeTab === 'archivedInstances') && (
                     <div>
@@ -325,10 +318,10 @@ export default function InventoryModal(props){
         <>
             <div className="d-flex justify-content-end">
               <p className="error-message">{errorMessage}</p>
-                <button type="button" className="link-btn" onClick={() => stateControl((prev) => !prev)}>
+                <button type="button" className="link-btn" onClick={() => stateControl((prev) => !prev)} disabled={buttonState}>
                     Discard
                     </button>
-                <button type="button" className="main-btn" onClick={handleSubmit}>Submit</button>
+                <button type="button" className="main-btn" onClick={handleSubmit} disabled={buttonState}>Submit</button>
             </div>
             
         </>
@@ -346,7 +339,8 @@ export default function InventoryModal(props){
         />
         <DeleteModal 
             stateChecker={isDeleteModalOpen} stateControl={() => setDeleteModalOpen((prev) => !prev)} 
-            type={'Instance'} method={method} id={itemId} isSubmittedControl={isSubmittedControl} prim={primaryKey} multipleIds={JSON.stringify(selectedRows)}/> 
+            type={'Instance'} method={method} id={itemId} isSubmittedControl={isSubmittedControl} prim={primaryKey}
+            multipleIds={JSON.stringify(selectedRows)}/> 
             </>
     )
 }

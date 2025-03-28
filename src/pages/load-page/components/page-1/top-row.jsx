@@ -57,6 +57,7 @@ export default function LoadTopRowPage1(props) {
                     "pdl-middle-name": data['pdl-middle-name'] || '',
                     "pdl-last-name": data['pdl-last-name'] || '',
                     "pdl-id": data['pdl-id'] || '',
+                    "pk": data['pk'] || '',
                     "pdl-age": data['pdl-age'] || '',
                     "pdl-gender": data['pdl-gender'] || '',
                     "pdl-other-gender": data['pdl-other-gender'] || '',
@@ -99,7 +100,7 @@ export default function LoadTopRowPage1(props) {
                         {filteredOptions.length > 0 && showAutocomplete && (
                             <div className="autocomplete" style={{left: 0}}>
                                 {filteredOptions.map((option) => (
-                                    <div key={option.pk} className="filter-option" onClick={() => handleAutocompleteClick(option.pk, option.name)}>
+                                    <div key={option.dbpk} className="filter-option" onClick={() => handleAutocompleteClick(option.dbpk, option.name)}>
                                         {option.name}
                                     </div>
                                 ))}

@@ -2,14 +2,51 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
+import { handleChangeWrapper, handleSubmitWrapper, isFormDataValid } from '../../../../utils';
 
 
-export default function ResetPassFormLayout(){
-    const [passwordData, setPasswordData] = useState({});
-    const {password, confirmPass} = passwordData;
+export default function ResetPassFormLayout(props){
+    const {openModal} = props
+    const urlparams = new URLSearchParams(window.location.search);
+    const resettoken = urlparams.get('resettoken');
+    const [formData, setFormData] = useState({});
     const [errorMessage, setErrorMessage] = useState("");
+    const handleChange = async(event) => {
+        await handleChangeWrapper(event, formData, setFormData);
+    }
+    useEffect(() => {
+        setFormData({
+            ...formData,
+            'password': '',
+            'confirm-pass': '',
+            'action': 'change-password',
+            'reset-token': resettoken,
+        })
+    }, [])
+
+    const handleSubmit = async(event) => {
+        if (formData['password'] !== formData['confirm-pass']) {
+            setErrorMessage('Passwords must match!');
+        } else if (!isFormDataValid(formData)) {
+            setErrorMessage('Please fill out all fields!');
+        } else {
+            try {
+                const response = await handleSubmitWrapper(event, formData);
+                if (response.success) {
+                    setErrorMessage('');
+                    openModal((prev) => !prev);
+                } else {
+                    setErrorMessage('Submission failed!');
+                }
+            } catch (error) {
+                setErrorMessage('An error occurred during submission!');
+
+            }
+        }
+        
+    }
     return(<>
-        <form className='d-flex form-layout justify-content-center' onSubmit={'handleSubmit'}>
+        <div className='d-flex form-layout justify-content-center' >
                 <div className="input-details" style={{ width: '400px' }}>
                 <label htmlFor="password" className="form-label" style={{ textAlign: 'left' }}>
                         New Password<span className='form-required'>*</span>
@@ -19,7 +56,7 @@ export default function ResetPassFormLayout(){
                         className="form-control mb-2"
                         id="password" name="password"
                         placeholder="Enter your password"
-                        onChange={'handleChange'}
+                        onChange={handleChange}
                     />
 
                     <label htmlFor="confirmPass" className="form-label" style={{ textAlign: 'left' }}>
@@ -28,17 +65,17 @@ export default function ResetPassFormLayout(){
                     <input
                         type="password"
                         className="form-control mb-2"
-                        id="confirmPass" name="confirmPass"
+                        id="confirm-pass" name="confirm-pass"
                         placeholder="Confirm your password"
-                        onChange={'handleChange'}
+                        onChange={handleChange}
                     />
                 <hr></hr>
-                    <button type="submit" className="nextBtn btn-secondary mt-4">
+                    <button type="submit" className="nextBtn btn-secondary mt-4" onClick={handleSubmit}>
                     Send Request
                     </button>
-                    <p style={{color: 'red', fontSize: '16px', margin: '0'}}>{errorMessage}</p>
+                    <p className='error-message'>{errorMessage}</p>
                 </div>
-            </form>
+            </div>
     </>);
 
 

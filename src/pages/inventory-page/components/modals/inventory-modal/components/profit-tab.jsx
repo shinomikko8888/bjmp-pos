@@ -3,6 +3,7 @@ import { lineChartData, lineChartOptions } from "../../../../../../utils/data-ma
 import { ChartTemplate } from "../../../../../../components";
 
 export default function ProfitTab(props) {
+    const {idFromProps} = props
     const chartData = [
         {   
             chartCtx: 'profitModal',
@@ -18,7 +19,7 @@ export default function ProfitTab(props) {
     ]
     return (
         <>
-            <ChartTemplate data={chartData[0]}/>
+            <ChartTemplate data={chartData[0]} idFromProps={idFromProps || 0}/>
         </>
     )
 

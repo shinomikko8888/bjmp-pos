@@ -3,7 +3,7 @@ import { fetchDataWrapper } from "../../../../utils";
 
 export default function SearchPdlForm(props) {
     const {formData, setFormData, handleChange, totalPrice, eraseData, 
-        setIsNamePopulated, isNamePopulated, searchTerm, setSearchTerm} = props
+        setIsNamePopulated, isNamePopulated, searchTerm, setSearchTerm, } = props
     const [allPdlData, setAllPdlData] = useState([]);
 
     const [showAutocomplete, setShowAutocomplete] = useState(false);
@@ -24,6 +24,7 @@ export default function SearchPdlForm(props) {
         fetchPdlData(id, (formattedName) => {
             setSearchTerm(formattedName);
         });
+        
     };
     
     const erasePdlData = () => {
@@ -45,6 +46,7 @@ export default function SearchPdlForm(props) {
             setFormData({
                 ...formData,
                 'pdl-data': {
+                    "pk": data['pk'] || '',
                     "pdl-first-name": data['pdl-first-name'] || '',
                     "pdl-middle-name": data['pdl-middle-name'] || '',
                     "pdl-last-name": data['pdl-last-name'] || '',
@@ -56,9 +58,11 @@ export default function SearchPdlForm(props) {
                     "pdl-medical-condition": data['pdl-medical-condition'] || '',
                     "pdl-branch-location": data['pdl-branch-location'] || '',
                     "pdl-balance": parseFloat(data['pdl-balance']).toFixed(2) || '',
+                    "pdl-fingerprint-id": data['pdl-fingerprint-id'] || '',
                     "pdl-image": userImage || ''
                 }
             });
+            
             if (callback) {
                 callback(formattedName);
             }
@@ -72,7 +76,13 @@ export default function SearchPdlForm(props) {
     );
     const fetchAllPdlData = async () => {
         try{
-            const rawData = await fetchDataWrapper('get-pdls');
+            let params = [];
+            const bjmpBranch = localStorage.getItem('bjmp-branch');
+
+            if (bjmpBranch !== 'BJMPRO-III Main Office') {
+                params.push(['br', bjmpBranch]);
+            }
+            const rawData = await fetchDataWrapper('get-pdls', params);
             const transformedData = rawData.map((data) => ({
                 dbpk: data['pk'],
                 pk: data['pdl-id'],
@@ -86,7 +96,6 @@ export default function SearchPdlForm(props) {
             console.error('Error fetching data: ', error);
         }
     }
-
    
     return(
         <>
@@ -101,7 +110,7 @@ export default function SearchPdlForm(props) {
                 {filteredOptions.length > 0 && showAutocomplete && (
                     <div className="autocomplete" style={{ width: inputRef.current.offsetWidth }}>
                         {filteredOptions.map((option) => (
-                            <div key={option.pk} className="filter-option" onClick={() => handleAutocompleteClick(option.pk, option.name)}>
+                            <div key={option.dbpk} className="filter-option" onClick={() => handleAutocompleteClick(option.dbpk, option.name)}>
                                 {option.name}
                             </div>
                         ))}
@@ -149,7 +158,7 @@ export default function SearchPdlForm(props) {
         {formData['purchase-type'] === 'Biometrics' && ( // Check if the selected payment method is "Permission"
                <div className="my-2">
                     <label  className="col-form-label">Fingerprint ID:</label>
-                    <h4>Not Available</h4>
+                    <h4>{formData['pdl-data']['pdl-fingerprint-id'] ? 'Available' : 'Not Available'}</h4>
                 </div>
             )}
         </div>

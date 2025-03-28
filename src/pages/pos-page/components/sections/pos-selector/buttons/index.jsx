@@ -85,7 +85,7 @@ export default function PosButtons(props){
         }*/
         const updatedFormData = {
           ...formData,
-          "commodity-item-id": data.pk || '',
+          "commodity-item-id": data.dbpk || '',
           "commodity-type": data.productType || '',
           "commodity-name": data.productName || '',
           "commodity-remaining-stock": data.remStock || '',

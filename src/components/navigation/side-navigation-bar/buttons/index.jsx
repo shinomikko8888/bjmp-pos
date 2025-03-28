@@ -10,9 +10,14 @@ export default function SidebarButtons({props, isSidebarOpen}){
                         <i className={props.icon}></i>
                         <span className={isSidebarOpen ? 'link-name' : 'tooltip'}>{props.name}</span>
                     </NavLink>
-                ) :
+                ) : props.type === 'Modal' ? 
                 (
                     <button className={({isActive}) => (isActive ? 'active' : '')} onClick={props.stateControl}>
+                        <i className={props.icon}></i>
+                        <span className={isSidebarOpen ? 'link-name' : 'tooltip'}>{props.name}</span>
+                    </button>
+                ) : (
+                    <button className={({isActive}) => (isActive ? 'active' : '')} onClick={props.tab}>
                         <i className={props.icon}></i>
                         <span className={isSidebarOpen ? 'link-name' : 'tooltip'}>{props.name}</span>
                     </button>

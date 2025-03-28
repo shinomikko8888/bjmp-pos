@@ -15,6 +15,7 @@ export default function ArchiveModal (props) {
       user: '',
     })
     const [errorMessage, setErrorMessage] = useState('');
+    const [buttonState, setButtonState] = useState(false);
     const filteredReasons = REASONS.filter(branch => branch.action === 'Archive')[0]?.content.filter(contentItem => contentItem.type === type)[0]?.reasons || [];
     useEffect(() => {
       setArchiveValue(
@@ -24,7 +25,6 @@ export default function ArchiveModal (props) {
         }
       )
     }, [stateChecker]);
-
     useEffect(() => {
       setArchiveValue({
         ...archiveValue,
@@ -44,14 +44,19 @@ export default function ArchiveModal (props) {
           setErrorMessage('Please set a reason for archiving!');
         else{
           setErrorMessage('');
+          setButtonState(true);
           try{
             const response = await handleSubmitWrapper(event, archiveValue, true);
             if (response.success) {
                 stateControl((prev) => !prev)
                 isSubmittedControl((prev) => !prev)
+                setButtonState(false);
+            } else {
+                setButtonState(false);
             }
           } catch (error) {
             console.error('Error: ', error);
+            setButtonState(false);
           }
         }
         
@@ -94,6 +99,7 @@ export default function ArchiveModal (props) {
             type="button"
             className='link-btn mx-2'
             onClick={() => stateControl((prev) => !prev)}
+            disabled={buttonState}
           >
             Cancel
           </button>
@@ -101,6 +107,7 @@ export default function ArchiveModal (props) {
             type="button"
             className='main-btn'
             onClick={handleSubmit}
+            disabled={buttonState}
           >
             Proceed
           </button>

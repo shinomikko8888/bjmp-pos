@@ -52,6 +52,7 @@
     opacity: 0;
     z-index: 99;
     width: max-content;
+    cursor: default;
     transition: opacity 0.3s ease-in-out; /* Add a fade-in transition */
   }
   
@@ -171,7 +172,19 @@
   .table-display-empty-hover:hover{
     transform: scale(1.02);
   }
+  .pagination {
+    display: flex;
+    overflow-x: auto; /* Adds horizontal scroll if items overflow */
+    white-space: nowrap; /* Prevents wrapping */
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
 
+  .pagination-container {
+      max-width: 100%; /* Ensures it stays within its parent */
+      overflow-x: hidden; /* Optional: Prevents spilling beyond the parent container */
+  }
   .pagination-link {
     background-color: white;
     border: 1px solid #ccc;

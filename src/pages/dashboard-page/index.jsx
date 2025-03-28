@@ -7,10 +7,15 @@ import { fetchDataWrapper } from '../../utils';
 
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState({});
+  const [tableData, setTableData] = useState({
+    pdlsWithLowBalance: [],
+    highestSpenders: [],
+    popularItems: [],
+    lowStockedItems: [],
+  });
   useEffect(() => {
     fetchData();
   }, [])
-
 
   const fetchData = async () => {
     let params = [
@@ -36,10 +41,49 @@ export default function Dashboard() {
         'name': mostPopularProduct,
         'qty': highestQuantity
     };
-    
     setDashboardData(data);
+
+    const pdlsWithLowBalance = data['pdls-with-low-balance'] || [];
+    const mappedPdlsWithLowBalance = pdlsWithLowBalance.map(pdl => ({
+      name: `${pdl['pdl-last-name'].toUpperCase()}, ${pdl['pdl-first-name']} ${pdl['pdl-middle-name']}`,
+      balance: parseFloat(pdl['pdl-balance']).toFixed(2),
+    }));
+    const highestSpenders = data['highest-spenders'] || [];
+    const mappedHighestSpenders = highestSpenders.map(pdl => ({
+      name: `${pdl['pdl-last-name'].toUpperCase()}, ${pdl['pdl-first-name']} ${pdl['pdl-middle-name']}`,
+      spendingTotal: parseFloat(pdl['total_spending']).toFixed(2),
+    }));
+    const popularItems = data['popular-items'] || [];
+    const mappedPopularItems = popularItems.map(item => ({
+      productName: `${item['product-name']} (${item['product-type']})`,
+      sold: item['sales'],
+    }));
+    const lowStockedItems = data['low-stocked-items'] || [];
+    const mappedLowStockedItems = lowStockedItems.map(item => ({
+      productName: `${item['item-name']} (${item['item-type']})`,
+      status: (() => {
+        const remainingStock = parseInt(item['item-remaining-stock']);
+        const criticalThreshold = parseInt(item['item-critical-threshold']);
+        const halfCriticalThreshold = Math.round(criticalThreshold / 2);
+
+        if (remainingStock > criticalThreshold) return 'Healthy';
+        else if (remainingStock === criticalThreshold || (remainingStock < criticalThreshold && remainingStock > halfCriticalThreshold)) return 'Critical';
+        else if (remainingStock < halfCriticalThreshold && remainingStock !== 0) return 'Severe';
+        else if (remainingStock === 0) return 'Unavailable';
+        else return 'Unavailable';
+      
+      })(),
+      remStock: item['item-remaining-stock'],
+    }));
+    setTableData(prevState => ({
+      ...prevState,
+      pdlsWithLowBalance: mappedPdlsWithLowBalance,
+      highestSpenders: mappedHighestSpenders,
+      popularItems: mappedPopularItems,
+      lowStockedItems: mappedLowStockedItems
+    }));
   }
-  
+  console.log(tableData);
   return (
     <>
       <Helmet>
@@ -47,8 +91,8 @@ export default function Dashboard() {
       </Helmet>
       <div>
         <OverviewSection data={dashboardData}/>
-        <PDLSection/>
-        <InventorySection />
+        <PDLSection data={tableData}/>
+        <InventorySection data={tableData}/>
     </div>
     </>
 

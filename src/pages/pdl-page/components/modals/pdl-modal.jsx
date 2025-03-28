@@ -8,6 +8,8 @@ export default function PDLModal(props){
     const [imageSrc, setImageSrc] = useState(null);
     const [tempImageSrc, setTempImageSrc] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [userType, setUserType] = useState('');
+    const [buttonState, setButtonState] = useState(false);
     const fileInputRef = useRef(null);
     const handleSvgClick = () => {
         if (fileInputRef.current) {
@@ -17,6 +19,7 @@ export default function PDLModal(props){
     const rectWidth = imageSrc || tempImageSrc ? 162 : 502; // Adjust width based on imageSrc
     const rectHeight = imageSrc || tempImageSrc ? 162 : 162; // Adjust height based on imageSrc
     const [formData, setFormData] = useState({
+        "pk": '',
         "pdl-first-name": '',
         "pdl-middle-name": '',
         "pdl-last-name": '',
@@ -31,8 +34,13 @@ export default function PDLModal(props){
         "action": '',
         "active-email": '',
     })
+
+    useEffect(() => {
+        fetchUserType()
+    }, [stateChecker])
     useEffect(() => {
         setFormData({
+            "pk": '',
             "pdl-first-name": '',
             "pdl-middle-name": '',
             "pdl-last-name": '',
@@ -54,9 +62,12 @@ export default function PDLModal(props){
         }
         if(isEdit && stateChecker){
             fetchData();
+            console.log(formData);
         }
         else{
+            const branch = localStorage.getItem('bjmp-branch');
             setFormData({
+                "pk": '',
                 "pdl-first-name": '',
                 "pdl-middle-name": '',
                 "pdl-last-name": '',
@@ -66,7 +77,7 @@ export default function PDLModal(props){
                 "pdl-other-gender": '',
                 "pdl-cell-no": '',
                 "pdl-medical-condition": '',
-                "pdl-branch-location": '',
+                "pdl-branch-location": branch !== 'BJ MPRO-III Main Office' ? branch : '',
                 "pdl-image": '',
                 "action": 'add-pdl',
                 "active-email": localStorage.getItem('user-email'),
@@ -75,10 +86,21 @@ export default function PDLModal(props){
             setTempImageSrc(null);
         }
 
-    }, [stateChecker, isEdit])
+    }, [stateChecker, isEdit, localStorage.getItem('user-email')])
     
+    const fetchUserType = async () => {
+        try{
+            if(localStorage.getItem('user-email')){
+                const response = await fetchDataWrapper('get-user', [['em', `'${localStorage.getItem('user-email')}'`]])
+                setUserType(response['user-type']);
+            }
+        } catch (error){
+            console.error('Error fetching data: ', error);
+        }
+    }
     const fetchData = async () => {
         try{
+           
             let params = [['id', id]];
             const bjmpBranch = localStorage.getItem('bjmp-branch');
 
@@ -89,6 +111,7 @@ export default function PDLModal(props){
             const data = await fetchDataWrapper('get-pdl', params);
             const userImage = data['pdl-image'] ? data['pdl-image'].replace('../api/files/images/pdls/', '') : '';
             setFormData({
+                "pk": data['pk'] || '',
                 "pdl-first-name": data['pdl-first-name'] || '',
                 "pdl-middle-name": data['pdl-middle-name'] || '',
                 "pdl-last-name": data['pdl-last-name'] || '',
@@ -103,6 +126,7 @@ export default function PDLModal(props){
                 "action": 'edit-pdl',
                 "active-email": localStorage.getItem('user-email'),
             });
+            
             setTempImageSrc(userImage);
         } catch (error){
             console.error('Error fetching data: ', error);
@@ -130,21 +154,29 @@ export default function PDLModal(props){
 
     const handleSubmit = async (event) => {
         try {
+            
             if (!isFormDataValid(formData)) {
                 setErrorMessage('Please fill in all required fields');
                 return;
-            }
-            const response = await handleSubmitWrapper(event, formData, true);
-            if (response.success) {
-                setErrorMessage('');
-                stateControl((prev) => !prev)
-                isSubmittedControl((prev) => !prev)
             } else {
-              setErrorMessage(response.message || "System error"); 
+                setButtonState(true);
+                const response = await handleSubmitWrapper(event, formData, true);
+                if (response.success) {
+                    setErrorMessage('');
+                    stateControl((prev) => !prev)
+                    isSubmittedControl((prev) => !prev)
+                    setButtonState(false);
+                } else {
+                setErrorMessage(response.message || "System error"); 
+                setButtonState(false);
+                }
             }
+            
           } catch (error) {
             console.error('Error: ', error);
             setErrorMessage(`Error: ${error}`);
+            setButtonState(false);
+
           }
     }
     const pdlModalHeader = (
@@ -256,7 +288,7 @@ export default function PDLModal(props){
                                     type="radio"
                                     name="pdl-gender"
                                     id="genderFemale"
-                                    checked={formData['pdl-gender'] === 'female'}
+                                    checked={formData['pdl-gender'] === 'Female'}
                                     style={{ boxShadow: 'none', width: '12px', height: '18px' }} // Adjust the size as needed
                                     onChange={handleChange}
                                     />
@@ -288,6 +320,7 @@ export default function PDLModal(props){
                                 type="text"
                                 name="pdl-other-gender"
                                 className="form-control"
+                                value={formData['pdl-other-gender'] || ''}
                                 style={{ boxShadow: 'none'}}
                                 placeholder="Enter other gender"
                                 onChange={handleChange}
@@ -311,9 +344,11 @@ export default function PDLModal(props){
                             <input type="text" id="pdl-medical-condition" name="pdl-medical-condition" className="form-control" style={{ boxShadow: 'none' }} value={formData['pdl-medical-condition'] || ''} placeholder="Enter condition." onChange={handleChange} />
                         </div>
                     </div>
-                <div className="row g-3 align-items-center">
+                    {
+                    userType === 'Administrator' && (
+                    <div className="row g-3 align-items-center">
                         <div className="col-12">
-                            <label htmlFor="pdl-branch-location" className="col-form-label">PDL Branch Location:<span className='form-required'>*</span></label>
+                            <label htmlFor="pdl-branch-location" className="col-form-label">PDL Unit Location:<span className='form-required'>*</span></label>
                             <select
                                 name="pdl-branch-location"
                                 id="pdl-branch-location"
@@ -332,7 +367,11 @@ export default function PDLModal(props){
                                 ))}
                             </select>
                         </div>
-                </div>
+                     </div>
+
+                        )
+                    }
+                
             </form>
         </>
     )
@@ -341,10 +380,10 @@ export default function PDLModal(props){
         <>
             <div className="d-flex justify-content-end">
             <p className="error-message">{errorMessage}</p>
-                <button type="button" className="link-btn" onClick={() => stateControl((prev) => !prev)}>
+                <button type="button" className="link-btn" onClick={() => stateControl((prev) => !prev)} disabled={buttonState}>
                     Discard
                     </button>
-                <button type="button" className="main-btn" onClick={handleSubmit}>Submit</button>
+                <button type="button" className="main-btn" onClick={handleSubmit} disabled={buttonState}>Submit</button>
             </div>
             
         </>

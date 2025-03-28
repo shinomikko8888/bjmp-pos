@@ -12,8 +12,10 @@ export const fetchDataWrapper = async (action, dataArray = []) => {
         throw new Error (`Error fetching data: ${error}`)
     }
 }
-export const handleSubmitWrapper = async (event, formData, hasFile = false) => {
-    event.preventDefault();
+export const handleSubmitWrapper = async (event, formData, hasFile = false, options = {}) => {
+    if (event && event.preventDefault) {
+        event.preventDefault();
+    }
     try {
         let data;
         if (hasFile) {
@@ -26,9 +28,19 @@ export const handleSubmitWrapper = async (event, formData, hasFile = false) => {
                 ...formData
             };
         }
+        const config = {
+            url: `${DOMAIN}/index.php`,
+            method: 'POST',
+            data: data,
+            ...options // Merge custom options like responseType: 'blob'
+        };
+        const response = await Axios(config);
+        if(options.responseType === 'blob'){
+            return response;
+        } else {
+            return response.data;
+        }
         
-        const response = await Axios.post(`${DOMAIN}/index.php`, data);
-        return response.data;
     } catch (error) {
         throw new Error(`Error handling submit: ${error}`);
     }
@@ -59,7 +71,7 @@ export const handleChangeWrapper = async (event, formData, setFormData) => {
 
 export const isFormDataValid = (data) => {
     for (const key in data){
-        if(data.hasOwnProperty(key) && (key === 'pdl-medical-condition' || key === 'pdl-other-gender')){
+        if(data.hasOwnProperty(key) && (key === 'pdl-medical-condition' || key === 'pdl-other-gender' || key === 'pk')){
             return true;
         }
         else if(data.hasOwnProperty(key) && (data[key] === '' || data[key] === null)){

@@ -13,6 +13,8 @@ export default function StockModal(props){
     const [imageSrc, setImageSrc] = useState(null);
     const [tempImageSrc, setTempImageSrc] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [userType, setUserType] = useState('');
+    const [buttonState, setButtonState] = useState(false);
     const fileInputRef = useRef(null);
     const handleSvgClick = () => {
         if (fileInputRef.current) {
@@ -22,6 +24,7 @@ export default function StockModal(props){
     const rectWidth = imageSrc || tempImageSrc ? 162 : 502; // Adjust width based on imageSrc
     const rectHeight = imageSrc || tempImageSrc ? 162 : 162; // Adjust height based on imageSrc
     const [formData, setFormData] = useState({
+        'pk': '',
         "item-type": '',
         "item-name": '',
         "item-category": '',
@@ -33,7 +36,11 @@ export default function StockModal(props){
         "active-email": '',
     });
     useEffect(() => {
+        fetchUserType()
+    }, [stateChecker])
+    useEffect(() => {
         setFormData({
+            'pk': '',
             "item-type": '',
             "item-name": '',
             "item-category": '',
@@ -53,13 +60,15 @@ export default function StockModal(props){
             fetchData();
         }
         else{
+            const branch = localStorage.getItem('bjmp-branch');
             setFormData({
+                'pk': '',
                 "item-type": '',
                 "item-name": '',
                 "item-category": '',
                 "item-price": '',
                 "item-critical-threshold": '',
-                "item-branch-location": '',
+                "item-branch-location": branch !== 'BJMPRO-III Main Office' ? branch : '',
                 "item-image": '',
                 "action": 'add-item',
                 "active-email": localStorage.getItem('user-email'),
@@ -68,6 +77,16 @@ export default function StockModal(props){
             setTempImageSrc(null);
         }
     }, [stateChecker, isEdit])
+    const fetchUserType = async () => {
+        try{
+            if(localStorage.getItem('user-email')){
+                const response = await fetchDataWrapper('get-user', [['em', `'${localStorage.getItem('user-email')}'`]])
+                setUserType(response['user-type']);
+            }
+        } catch (error){
+            console.error('Error fetching data: ', error);
+        }
+    }
 
     const fetchData = async () => {
         try{
@@ -80,6 +99,7 @@ export default function StockModal(props){
             const data = await fetchDataWrapper('get-item', params);
             const userImage = data['item-image'] ? data['item-image'].replace('../api/files/images/items/', '') : '';
             setFormData({
+                'pk': data['pk'] || null,
                 "item-id": data['item-id'] || null,
                 "item-type": data['item-type'] || null,
                 "item-name": data['item-name'] || null,
@@ -121,18 +141,24 @@ export default function StockModal(props){
             if (!isFormDataValid(formData)) {
                 setErrorMessage('Please fill in all required fields');
                 return;
-            }
-            const response = await handleSubmitWrapper(event, formData, true);
-            if (response.success) {
-                setErrorMessage('');
-                stateControl((prev) => !prev)
-                isSubmittedControl((prev) => !prev)
             } else {
-              setErrorMessage(response.message || "System error"); 
+                setButtonState(true);
+                const response = await handleSubmitWrapper(event, formData, true);
+                if (response.success) {
+                    setErrorMessage('');
+                    stateControl((prev) => !prev)
+                    isSubmittedControl((prev) => !prev)
+                    setButtonState(false);
+                } else {
+                  setErrorMessage(response.message || "System error"); 
+                  setButtonState(false);
+                }
             }
+            
           } catch (error) {
             console.error('Error: ', error);
             setErrorMessage(`Error: ${error}`);
+            setButtonState(false);
           }
     }
     const stockModalHeader = (
@@ -271,9 +297,11 @@ export default function StockModal(props){
                 <input type="number" id="item-critical-threshold" name="item-critical-threshold" className="form-control" value={formData['item-critical-threshold'] || ''} style={{ boxShadow: 'none' }} placeholder="Enter product critical threshold" onChange={handleChange} />
                 </div>
             </div>
-            <div className="row g-3 align-items-center">
+            {
+                userType === 'Administrator' && (
+                <div className="row g-3 align-items-center">
                     <div className="col-12">
-                        <label htmlFor="item-branch-location" className="col-form-label">Product Branch Location</label>
+                        <label htmlFor="item-branch-location" className="col-form-label">Product Unit Location</label>
                         <select
                             name="item-branch-location"
                             id="item-branch-location"
@@ -293,6 +321,9 @@ export default function StockModal(props){
                         </select>
                     </div>
             </div>
+                )
+            }
+            
             </form>
            
         </>
@@ -306,10 +337,10 @@ export default function StockModal(props){
             </div>
             <div className="d-flex justify-content-end">
             <p className="error-message">{errorMessage}</p>
-                <button type="button" className="link-btn" onClick={() => stateControl((prev) => !prev)}>
+                <button type="button" className="link-btn" onClick={() => stateControl((prev) => !prev)} disabled={buttonState}>
                     Discard
                     </button>
-                <button type="button" className="main-btn" onClick={handleSubmit}>Submit</button>
+                <button type="button" className="main-btn" onClick={handleSubmit} disabled={buttonState}>Submit</button>
             </div>
             
         </>

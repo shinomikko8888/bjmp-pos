@@ -1,10 +1,11 @@
 import React from 'react';
 import '../../../styles/buttons/general.css'
 import Modal from '..';
+import { useNavigate } from 'react-router-dom';
 
 export default function SuccessfulActionModal(props) {
-    const {stateChecker, stateControl, actionTitle, actionDescription, isSubmitted, isSubmittedControl} = props;
-
+    const {stateChecker, stateControl, actionTitle, actionDescription, isSubmitted, isSubmittedControl, isLogOut, isResetPass} = props;
+    const nav = useNavigate();
     const successfulActionHeader = (
         <div className='w-100 text-center'>
             <i className='fa-regular fa-circle-check' style={{ fontSize: '40px' }}></i>
@@ -27,6 +28,9 @@ export default function SuccessfulActionModal(props) {
             onClick={() => {
                 stateControl((prev) => !prev);
                 isSubmittedControl((prev) => !prev);
+                if (isLogOut || isResetPass) {
+                    nav('/');
+                } 
             }}
         >
             OK

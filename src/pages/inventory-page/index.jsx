@@ -34,6 +34,7 @@ export default function Inventory() {
   const [itemId, setItemId] = useState('');
   const [primaryKey, setPrimaryKey] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
+  const [retrieveBranch, setRetrieveBranch] = useState('');
   useEffect(() => {
     setOnArchivedTab(activeTab !== 'archivedItems');
     fetchData();
@@ -62,13 +63,15 @@ export default function Inventory() {
           const remainingStock = parseInt(data['item-remaining-stock']);
           const criticalThreshold = parseInt(data['item-critical-threshold']);
           const halfCriticalThreshold = Math.round(criticalThreshold / 2);
-
+        
+          if (remainingStock === 0) return 'Unavailable';
           if (remainingStock > criticalThreshold) return 'Healthy';
-          else if (remainingStock === criticalThreshold || (remainingStock < criticalThreshold && remainingStock > halfCriticalThreshold)) return 'Critical';
-          else if (remainingStock < halfCriticalThreshold && remainingStock !== 0) return 'Severe';
-          else if (remainingStock === 0) return 'Unavailable';
-          else return 'Unavailable';
+          if (remainingStock <= criticalThreshold && remainingStock > halfCriticalThreshold) return 'Critical';
+          if (remainingStock <= halfCriticalThreshold && remainingStock > 0) return 'Severe';
+          
+          return 'Unavailable'; // fallback if none of the conditions match
         })(),
+        
         remStock: data['item-remaining-stock'],
         isArchived: data['is-archived'],
       }))
@@ -120,7 +123,7 @@ export default function Inventory() {
         },
         {
           headerId: 'bjmpBranch',
-          headerName: 'BJMP Branch',
+          headerName: 'BJMP Unit',
           hasFilter: true,
           hasLowHigh: false,
         },
@@ -198,6 +201,7 @@ export default function Inventory() {
               setItemId('');
               setPrimaryKey('');
               setMethod('Multiple');
+              
             }
           },
           forArchive: true,
@@ -331,7 +335,7 @@ export default function Inventory() {
         actionIcon: 'fa-solid fa-rotate-left fa-sm',
         actionFunctionality: {
           action: 'retrieveItem',
-          function: function(data, prim){
+          function: function(data, prim, branch){
             setRetrieveModalOpen((prev) => !prev);
             setView(false);
             setEdit(false);
@@ -343,6 +347,7 @@ export default function Inventory() {
             setPrimaryKey(prim);
             setSelectedRows([]);
             setMethod('Single');
+            setRetrieveBranch(branch);
           }
         },
         forArchive: true
@@ -381,6 +386,7 @@ export default function Inventory() {
     isArchive ? `Item ${ARCHIVE_DESCRIPTION}!` : isRetrieve ? `Item ${RETRIEVE_DESCRIPTION}!` :
      isDelete ? `Item ${DELETE_DESCRIPTION}!` : `Item ${ADD_DESCRIPTION}!`
   }
+  
   return (<>
     <div>
       <Helmet>
@@ -390,16 +396,16 @@ export default function Inventory() {
       <TableTemplate 
           tableData={stockTableData[0]} archived={onArchivedTab} setRows={setSelectedRows} actionSubmitted={isSuccessfulActionModalOpen}/>
         <InventoryModal stateChecker={isInventoryModalOpen} stateControl={() => setInventoryModalOpen((prev) => !prev)} isEdit={isEdit} isView={isView}
-        isSubmittedControl = {() => setItemModalSubmitted((prev) => !prev)} id={itemId} setEdit={() => setEdit((prev) => !prev)} setView={() => setView((prev) => !prev)} setDelete={(prev) => !prev}/>
+        isSubmittedControl = {() => setItemModalSubmitted((prev) => !prev)} id={primaryKey} setEdit={() => setEdit((prev) => !prev)} setView={() => setView((prev) => !prev)} setDelete={(prev) => !prev}/>
         <StockModal stateChecker={isStockModalOpen} stateControl={() => setStockModalOpen((prev) => !prev)} isEdit={isEdit} 
-        isSubmittedControl = {() => setItemModalSubmitted((prev) => !prev)} id={itemId} optionData={optionData}/>
+        isSubmittedControl = {() => setItemModalSubmitted((prev) => !prev)} id={primaryKey} optionData={optionData}/>
         <SuccessfulActionModal stateChecker={isSuccessfulActionModalOpen} stateControl={() => setSuccessfulActionModalOpen((prev) => !prev)} isSubmitted={itemModalSubmitted}
         isSubmittedControl={() => setItemModalSubmitted((prev) => !prev)} actionTitle={submissionDetails.title} actionDescription={submissionDetails.description}/>
         <ArchiveModal 
         stateChecker={isArchiveModalOpen} stateControl={() => setArchiveModalOpen((prev) => !prev)} 
-        type={'Item'} method={method} id={itemId} isSubmittedControl={() => setItemModalSubmitted((prev) => !prev)} multipleIds={JSON.stringify(selectedRows)} />
+        type={'Item'} method={method} id={primaryKey} isSubmittedControl={() => setItemModalSubmitted((prev) => !prev)} multipleIds={JSON.stringify(selectedRows)} />
         <RetrieveModal stateChecker={isRetrieveModalOpen} stateControl={() => setRetrieveModalOpen((prev) => !prev)} 
-        type={'Item'} method={method} id={itemId} isSubmittedControl={() => setItemModalSubmitted((prev) => !prev)} prim={primaryKey} multipleIds={JSON.stringify(selectedRows)}/>
+        type={'Item'} method={method} id={itemId} isSubmittedControl={() => setItemModalSubmitted((prev) => !prev)} prim={primaryKey} multipleIds={JSON.stringify(selectedRows)} branch={retrieveBranch}/>
         <DeleteModal stateChecker={isDeleteModalOpen} stateControl={() => setDeleteModalOpen((prev) => !prev)} 
         type={'Item'} method={method} id={itemId} isSubmittedControl={() => setItemModalSubmitted((prev) => !prev)} prim={primaryKey} multipleIds={JSON.stringify(selectedRows)} />
     </div>

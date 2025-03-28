@@ -32,7 +32,7 @@ export default function Pdl() {
   const [pdlId, setPdlId] = useState('');
   const [primaryKey, setPrimaryKey] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
-
+  const [retrieveBranch, setRetrieveBranch] = useState('');
   useEffect(() => {
     setOnArchivedTab(activeTab !== 'archivedItems');
     fetchData();
@@ -101,7 +101,7 @@ export default function Pdl() {
           },
           {
             headerId: 'bjmpBranch',
-            headerName: 'BJMP Branch',
+            headerName: 'BJMP Unit',
             hasFilter: true,
             hasLowHigh: false,
           },
@@ -171,6 +171,7 @@ export default function Pdl() {
                 setRetrieve(true);
                 setDelete(false);
                 setPdlId('');
+                setPrimaryKey('');
               }
             },
             forArchive: true,
@@ -238,6 +239,7 @@ export default function Pdl() {
                 setRetrieve(false);
                 setDelete(false);
                 setPdlId(data);
+                setPrimaryKey(prim);
                 setSelectedRows([]);
               }
             },
@@ -267,7 +269,7 @@ export default function Pdl() {
             actionIcon: 'fa-solid fa-rotate-left fa-sm',
             actionFunctionality: {
               action: 'retrievePDL',
-              function: function(data, prim){
+              function: function(data, prim, branch){
                 setRetrieveModalOpen((prev) => !prev);
                 setMethod('Single');
                 setEdit(false);
@@ -276,6 +278,7 @@ export default function Pdl() {
                 setDelete(false);
                 setPdlId(data);
                 setPrimaryKey(prim);
+                setRetrieveBranch(branch);
                 setSelectedRows([]);
               }
             },
@@ -324,15 +327,15 @@ export default function Pdl() {
         <TableTemplate 
           tableData={pdlTableData[0]} archived={onArchivedTab} setRows={setSelectedRows} actionSubmitted={isSuccessfulActionModalOpen}/>
         <PDLModal stateChecker={isPDLModalOpen} stateControl={() => setPDLModalOpen((prev) => !prev)} isEdit={isEdit}
-        isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} id={pdlId} />
+        isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} id={primaryKey} />
         <SuccessfulActionModal stateChecker={isSuccessfulActionModalOpen} stateControl={() => setSuccessfulActionModalOpen((prev) => !prev)}
         isSubmitted={pdlModalSubmitted} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} actionTitle={submissionDetails.title} actionDescription={submissionDetails.description}
         />
         <ArchiveModal 
         stateChecker={isArchiveModalOpen} stateControl={() => setArchiveModalOpen((prev) => !prev)} 
-        type={'PDL'} method={method} id={pdlId} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} multipleIds={JSON.stringify(selectedRows)}/>
+        type={'PDL'} method={method} id={primaryKey} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} multipleIds={JSON.stringify(selectedRows)}/>
         <RetrieveModal stateChecker={isRetrieveModalOpen} stateControl={() => setRetrieveModalOpen((prev) => !prev)} 
-        type={'PDL'} method={method} id={pdlId} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} prim={primaryKey} multipleIds={JSON.stringify(selectedRows)}/>
+        type={'PDL'} method={method} id={pdlId} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} prim={primaryKey} multipleIds={JSON.stringify(selectedRows)} branch={retrieveBranch}/>
         <DeleteModal stateChecker={isDeleteModalOpen} stateControl={() => setDeleteModalOpen((prev) => !prev)} 
         type={'PDL'} method={method} id={pdlId} isSubmittedControl={() => setPdlModalSubmitted((prev) => !prev)} prim={primaryKey} multipleIds={JSON.stringify(selectedRows)}/>
 

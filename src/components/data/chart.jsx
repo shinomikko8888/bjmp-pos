@@ -4,10 +4,12 @@ import { Bar, Line, Pie } from "react-chartjs-2";
 import { fetchDataWrapper, handleChangeWrapper } from "../../utils";
 import { BRANCHES, CURRENTMONTH, CURRENTYEAR, MONTHS, YEARS } from "../../constants";
 import DateSelector from "./date-selector";
-import { lineChartData, lineChartOptions, matrixDateMonth, matrixDateMonthOption, matrixDateYear, matrixDateYearOption, pieChartData, pieChartOptions } from "../../utils/data-management/chart-data";
+import { barChartData, barChartOptions, lineChartData, lineChartOptions, matrixDateMonth, matrixDateMonthOption, matrixDateYear, matrixDateYearOption, pieChartData, pieChartOptions } from "../../utils/data-management/chart-data";
 
 export default function ChartTemplate(props){
-    const {data} = props
+    const {data, idFromProps} = props
+    const urlparams = new URLSearchParams(window.location.search);
+    const id = urlparams.get('id'); 
     const [selectedDate, setSelectedDate] = useState({
         [`${data.chartCtx}-branch-enabled`]: false,
         [`${data.chartCtx}-selected-branch`]: localStorage.getItem('bjmp-branch') !== 'BJMPRO-III Main Office' ? localStorage.getItem('bjmp-branch') : '',
@@ -17,10 +19,9 @@ export default function ChartTemplate(props){
     });
     const [chartData, setChartData] = useState({})
     useEffect(() => {
-
         fetchData();
-        
-    }, [selectedDate]);
+
+    }, [selectedDate, idFromProps]);
     const fetchData = async () => {
         try {
             let params = [
@@ -31,6 +32,10 @@ export default function ChartTemplate(props){
             const bjmpBranch = localStorage.getItem('bjmp-branch');
             if (bjmpBranch !== 'BJMPRO-III Main Office') {
                 params.push(['br', bjmpBranch]);
+            }  if (id) {
+                params.push(['id', id]);
+            } else if (idFromProps) {
+                params.push(['id', idFromProps]);
             }
             const rawData = await fetchDataWrapper('get-charts', params);
             setChartData(rawData);
@@ -143,7 +148,8 @@ export default function ChartTemplate(props){
                                                 matrixDateMonthOption(selectedDate, data.chartCtx)} 
                                                 />;
                                         case 'bar':
-                                            return 'Bar'//<Bar data={config.data} options={config.options}/>;
+                                            return chartData && <Bar
+                                             data={barChartData(chartData[0])} options={barChartOptions()}/>;
                                         case 'line':
                                             return chartData[0] && <Line
                                              data={lineChartData(chartData[0])} options={lineChartOptions()}/>;
